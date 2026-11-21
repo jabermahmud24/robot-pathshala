@@ -157,42 +157,6 @@ dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
 RB.onLv.push(() => { if (dlg.open) fillRobot(); });
 render();
 
-/* ----- build your own robot ----- */
-const OPTS = [
-  ['move', 'কীভাবে চলবে?', [['wheel', 'চাকা'], ['dog', 'পা'], ['drone', 'প্রপেলারে উড়বে'], ['sub', 'পানির নিচে সাঁতরাবে'], ['arm', 'এক জায়গায় দাঁড়ানো বাহু']]],
-  ['sense', 'কী দিয়ে টের পাবে?', [['cam', 'ক্যামেরা'], ['sonar', 'আল্ট্রাসনিক'], ['heat', 'তাপ সেন্সর'], ['gps', 'GPS']]],
-  ['tool', 'হাতে কী থাকবে?', [['grip', 'গ্রিপার'], ['brush', 'ব্রাশ'], ['spray', 'স্প্রে'], ['none', 'কিছু না, শুধু দেখবে']]]
-];
-const TCOL = { grip: '#7a5cff', brush: '#ff8a3d', spray: '#1ea7dc', none: '#e8432f' };
-const NAMES = {
-  'wheel-grip': 'ডেলিভারি রোবট', 'wheel-brush': 'ঘর পরিষ্কারক রোবট', 'wheel-spray': 'জীবাণুনাশক রোবট', 'wheel-none': 'টহলদার রোবট',
-  'dog-grip': 'বাহুওয়ালা রোবট কুকুর', 'dog-brush': 'সোলার প্যানেল পরিষ্কারক', 'dog-spray': 'আগুন নেভানো রোবট কুকুর', 'dog-none': 'পরিদর্শক রোবট কুকুর',
-  'drone-grip': 'ডেলিভারি ড্রোন', 'drone-brush': 'জানালা পরিষ্কারক ড্রোন', 'drone-spray': 'কৃষি স্প্রে ড্রোন', 'drone-none': 'ছবি তোলার ড্রোন',
-  'sub-grip': 'পানির নিচের উদ্ধারকারী', 'sub-brush': 'জাহাজ পরিষ্কারক', 'sub-spray': 'পানির নিচের মেরামতকারী', 'sub-none': 'সমুদ্র গবেষক রোবট',
-  'arm-grip': 'পিক-অ্যান্ড-প্লেস বাহু', 'arm-brush': 'পালিশ করার বাহু', 'arm-spray': 'রং করার রোবট', 'arm-none': 'মান পরীক্ষক বাহু'
-};
-const WHERE = { wheel: 'ঘরে আর রাস্তায়', dog: 'পাহাড়ি আর এবড়োখেবড়ো জায়গায়', drone: 'আকাশে উড়ে', sub: 'নদী আর সাগরের নিচে', arm: 'কারখানায় এক জায়গায় দাঁড়িয়ে' };
-const DO = { grip: 'জিনিস তুলে পৌঁছে দিতে', brush: 'ময়লা পরিষ্কার করতে', spray: 'পানি বা ওষুধ ছিটাতে', none: 'চারপাশ পাহারা দিতে' };
-const WHY = { cam: 'ক্যামেরা দিয়ে সে জিনিস আর মানুষ চিনবে।', sonar: 'আল্ট্রাসনিক দিয়ে সে বাধা টের পেয়ে এড়িয়ে যাবে।', heat: 'তাপ সেন্সর দিয়ে সে আগুন বা মানুষের শরীরের উষ্ণতা খুঁজবে।', gps: 'GPS দিয়ে সে জানবে পৃথিবীর ঠিক কোথায় আছে।' };
-const LIKE = { wheel: ['wheel', 'disc', 'car', 'rover'], dog: ['dog', 'bug'], drone: ['drone', 'plane'], sub: ['sub', 'boat', 'fish'], arm: ['arm'] };
-let b = Object.assign({ move: 'wheel', sense: 'cam', tool: 'brush' }, RB.store.get('build', {}));
-$('opts').innerHTML = OPTS.map(([k, h, o]) => `<div class="opt"><h3>${h}</h3><div class="chips" data-k="${k}">${o.map(([v, t]) => `<button class="chip" data-v="${v}" aria-pressed="false">${t}</button>`).join('')}</div></div>`).join('');
-function build() {
-  document.querySelectorAll('#opts .chips').forEach(g => g.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', String(b[g.dataset.k] === c.dataset.v))));
-  $('bPic').innerHTML = RB.pic(b.move, TCOL[b.tool]);
-  $('bName').textContent = 'তোমার রোবট: ' + NAMES[b.move + '-' + b.tool];
-  let warn = '';
-  if (b.move === 'sub' && b.sense === 'gps') warn = ' সাবধান: পানির নিচে GPS সংকেত পৌঁছায় না! এখানে সোনার বা ক্যামেরা বেশি কাজের।';
-  if (b.move === 'arm' && b.sense === 'gps') warn = ' এক জায়গায় দাঁড়ানো বাহু কখনো নড়ে না, তাই GPS তার কাজে লাগবে না। ক্যামেরা দিয়ে দেখো।';
-  $('bJob').textContent = `এই রোবট ${WHERE[b.move]} ${DO[b.tool]} পারবে। ${WHY[b.sense]}${warn}`;
-  const like = ROB.filter(r => LIKE[b.move].includes(r.s)).slice(0, 4);
-  $('bLike').innerHTML = 'এমন আসল রোবট: ' + like.map(r => `<button class="chip" data-id="${r.id}" style="margin:4px 4px 0 0">${r.n}</button>`).join('');
-  RB.store.set('build', b);
-}
-$('opts').addEventListener('click', e => { const c = e.target.closest('.chip'); if (!c) return; b[c.parentElement.dataset.k] = c.dataset.v; build(); });
-$('bLike').addEventListener('click', e => { const c = e.target.closest('.chip'); if (c) openRobot(+c.dataset.id, ROB); });
-build();
-
 /* ----- quiz ----- */
 const QN = 6;
 let qs = [], qi = 0, score = 0;

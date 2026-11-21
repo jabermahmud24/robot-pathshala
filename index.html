@@ -123,6 +123,50 @@ dialog::backdrop{background:rgba(20,18,50,.55)}
 .stars{font-size:26px;letter-spacing:4px;color:var(--coral)}
 footer{background:var(--ink);color:var(--bg)}
 footer a{color:inherit}
+.missions{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 12px;margin-top:14px}
+.mcard{flex:none;min-width:150px;text-align:left;border:2px solid var(--line);background:var(--card);border-radius:18px;padding:10px 14px;display:grid;gap:2px}
+.mcard b{font:700 18px "Baloo Da 2",sans-serif}.mcard .st{color:var(--coral);font-size:16px;letter-spacing:2px}
+.mcard[aria-pressed=true]{border-color:var(--ink);background:var(--sun);color:var(--sunInk)}
+.lab{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);grid-template-areas:"brief shop" "scene shop" "stats shop" "act shop" "res shop";grid-template-rows:auto auto auto auto 1fr;gap:14px 24px;margin-top:8px;align-items:start}
+.brief{grid-area:brief}.scene{grid-area:scene}.shop{grid-area:shop}.stats{grid-area:stats}.act{grid-area:act}.res{grid-area:res}
+.brief h3{font-size:26px}.need{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:15px;color:var(--soft)}
+.scene{position:relative;aspect-ratio:2/1;border-radius:24px;overflow:hidden;background:#cfe6f5}
+.scene>#bg{position:absolute;inset:0;width:100%;height:100%}
+.bot{position:absolute;left:4%;bottom:12%;width:36%;height:auto;aspect-ratio:214/128;overflow:visible}
+.bot .spin{transform-box:fill-box;transform-origin:center;animation:flap .25s linear infinite alternate}
+@keyframes flap{to{transform:scaleX(.35)}}
+.bot.oops{animation:oops .9s forwards}
+@keyframes oops{0%,30%,60%{transform:translateX(-5px)}15%,45%{transform:translateX(5px)}100%{transform:rotate(12deg) translateY(10%);filter:grayscale(.7)}}
+.bot.win{animation:hop .45s ease-out 3}
+@keyframes hop{50%{transform:translateY(-12%)}}
+.pg{margin-bottom:14px}.pg h3{font-size:19px;margin-bottom:8px}.pg h3 small{font:500 14px "Hind Siliguri",sans-serif;color:var(--soft)}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.part{text-align:left;border:2px solid var(--line);background:var(--card);border-radius:14px;padding:8px 10px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 8px;align-content:start;min-height:44px}
+.part .pn{font-weight:700;font-size:15px;line-height:1.3}.part .pc{font-size:13px;font-weight:700;color:#b07800;white-space:nowrap}
+.part small,.part i{grid-column:1/-1;font-size:13px;color:var(--soft);line-height:1.4;font-style:normal}
+.part[aria-pressed=true]{border-color:var(--ink);background:color-mix(in srgb,#ffcd1f 30%,var(--card))}
+.shopmsg{color:var(--coral);font-weight:700;min-height:1.2em;margin:0}
+.sr{display:grid;grid-template-columns:4.2em minmax(0,1fr) auto;gap:10px;align-items:center;font-size:15px;margin-bottom:6px}
+.sb{height:12px;border-radius:6px;background:var(--card);border:1px solid var(--line);overflow:hidden}.sb i{display:block;height:100%;border-radius:6px;transition:width .3s}
+.sr b{white-space:nowrap;font-size:15px}.calc{font-size:14px;color:var(--soft);margin-top:6px}
+.act{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.act .nm{font-weight:600;font-size:15px}
+#botName{font:16px "Hind Siliguri",sans-serif;padding:8px 12px;border:2px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);width:9em;min-height:46px}
+.btn.go{background:var(--coral);color:#fff;font-size:18px;padding:10px 22px}
+.btn:disabled{opacity:.5}
+.btn.wide{width:100%;margin-top:6px}
+.hint{flex-basis:100%;background:var(--card);border-radius:12px;padding:10px 12px;margin:0;font-weight:600}
+.log{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.log li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:8px;align-items:start;background:var(--card);border-radius:12px;padding:8px 10px;font-size:15px;animation:pop .25s ease-out}
+.log li span{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:14px}
+.log .ok span{background:#1fa463}.log .warn span{background:#e0a800}.log .fail span{background:#e8432f}.log .bonus span{background:#7a5cff}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}}
+.verdict{border-radius:18px;padding:14px 16px;margin-top:10px}
+.verdict.win{background:var(--sun);color:var(--sunInk)}.verdict.lose{background:color-mix(in srgb,#e8432f 16%,var(--card))}
+.verdict b{display:block;font:800 22px "Baloo Da 2",sans-serif}.verdict .big{font-size:30px;letter-spacing:4px;color:#e8432f}
+.verdict .real .chip{margin:4px 4px 0 0}
+@media(max-width:860px){.lab{grid-template-columns:minmax(0,1fr);grid-template-areas:"brief" "scene" "stats" "act" "res" "shop";grid-template-rows:none}.scene{aspect-ratio:16/10}.bot{width:44%}}
+@media(max-width:600px){.pgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:860px){.explorer,.loop,.builder{grid-template-columns:minmax(0,1fr)}.result{position:static}}
 @media(max-width:600px){.stage{min-height:360px}.quizbox{grid-template-columns:minmax(0,1fr)}.answers{grid-template-columns:minmax(0,1fr)}.steps3{grid-template-columns:minmax(0,1fr)}.links a{padding:6px 8px;font-size:15px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.rc .pic{height:100px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
@@ -186,17 +230,16 @@ footer a{color:inherit}
   <div class="grid" id="grid"></div>
 </div></section>
 
-<section class="band" id="banao"><div class="wrap">
-  <h2>নিজের রোবট বানাও</h2>
-  <p class="lead">চলার উপায়, সেন্সর আর হাতিয়ার বেছে নাও। দেখো তোমার রোবট কোন কাজের জন্য সবচেয়ে ভালো।</p>
-  <div class="builder" style="margin-top:18px">
-    <div id="opts"></div>
-    <div class="result" aria-live="polite">
-      <svg class="pic" id="bPic" viewBox="0 0 200 140" aria-hidden="true"></svg>
-      <h3 id="bName"></h3>
-      <p id="bJob"></p>
-      <p id="bLike" style="font-size:15px"></p>
-    </div>
+<section class="band" id="banao" style="background:var(--tint)"><div class="wrap">
+  <div class="cathead"><div><h2>রোবট বানাও, মিশন জেতো</h2><p class="lead">একটা মিশন বেছে নাও, বাজেটের মধ্যে যন্ত্রাংশ কিনে রোবট বানাও, তারপর পরীক্ষা চালাও। রোবট সফল হবে, না আটকে যাবে?</p></div><p class="count" id="bRank"></p></div>
+  <div class="missions" id="missions"></div>
+  <div class="lab">
+    <div class="brief"><h3 id="mT"></h3><p id="mS"></p><p class="need" id="mNeed"></p></div>
+    <div class="scene" id="scene"><svg id="bg" viewBox="0 0 600 260" preserveAspectRatio="xMidYMax slice" aria-hidden="true"></svg><svg id="bot" class="bot" viewBox="-14 6 214 128" aria-label="তোমার রোবট"></svg></div>
+    <div class="shop"><div id="shop"></div><p class="shopmsg" id="shopMsg" aria-live="polite"></p><button class="btn go wide" id="runBtn2">রোবট তৈরি! মিশন শুরু করো</button></div>
+    <div class="stats" id="stats"></div>
+    <div class="act"><label for="botName" class="nm">রোবটের নাম</label><input id="botName" type="text" maxlength="20"><button class="btn go" id="runBtn">মিশন শুরু করো!</button><button class="btn alt" id="hintBtn">সাহায্য</button><button class="btn alt" id="resetBtn">নতুন করে বানাও</button><p class="hint" id="hintBox" hidden></p></div>
+    <div class="res" id="result" aria-live="polite"></div>
   </div>
 </div></section>
 
@@ -244,5 +287,7 @@ footer a{color:inherit}
 <script src="app.js"></script>
 <script src="comps.js"></script>
 <script src="app2.js"></script>
+<script src="missions.js"></script>
+<script src="build.js"></script>
 </body>
 </html>
