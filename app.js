@@ -38,6 +38,7 @@ const S = {
   bug: c => `${[60, 84, 108].map(x => `<path d="M${x + 14} 80 L${x} 104 M${x + 14} 76 L${x} 52" stroke="${D}" stroke-width="4" stroke-linecap="round"/>`).join('')}<ellipse cx="84" cy="60" rx="26" ry="10" fill="#fff" opacity=".55" transform="rotate(-20 84 60)"/><ellipse cx="96" cy="78" rx="38" ry="18" fill="${c}"/>${shine(74, 64, 34, 6)}<circle cx="140" cy="74" r="14" fill="${c}"/>${eye(144, 70, 5)}`,
   soft: c => `${[56, 76, 96, 116, 136].map((x, i) => `<path d="M${x + 4} 74 q${i % 2 ? 10 : -10} 22 ${i % 2 ? -4 : 4} 40" stroke="${c}" stroke-width="11" fill="none" stroke-linecap="round"/>`).join('')}<ellipse cx="100" cy="56" rx="38" ry="32" fill="${c}"/>${shine(78, 32, 24, 7)}${eye(88, 56, 6)}${eye(112, 56, 6)}`
 };
+RB.S = S;
 RB.pic = (shape, col) => `<rect width="200" height="140" fill="${col}" opacity=".13"/><circle cx="100" cy="70" r="60" fill="${col}" opacity=".16"/><ellipse cx="100" cy="124" rx="62" ry="7" fill="#000" opacity=".13"/>${(S[shape] || S.cute)(col)}`;
 
 /* ----- reading level ----- */

@@ -1,0 +1,27 @@
+window.X = window.X || {};
+Object.assign(window.X, {
+"Quadcopter drone": ["cam@head gps@back imu@core batt@power prop@top motor@front", "চারজন মিলে একটা চাদরের চার কোণ ধরে রাখার মতো: একজন ঢিল দিলেই চাদর সেদিকে হেলে যায়।", "ড্রোনের কম্পিউটার সেকেন্ডে শতবার মোটরের গতি ঠিক করে, তাই বাতাসের মধ্যেও স্থির ভেসে থাকে।"],
+"Medical delivery drone": ["gps@front chip@core batt@power motor@head bin@base wing@top", "আকাশপথের ডাকপিয়ন, যে ছাদে না নেমে চিঠি ফেলে দিয়ে চলে যায়।", "রুয়ান্ডা আর ঘানার মতো দেশে এমন ড্রোন দূরের হাসপাতালে রক্ত পৌঁছে দিয়ে অনেক জীবন বাঁচিয়েছে।"],
+"Survey mapping drone": ["cam@head gps@back imu@core batt@power prop@top", "ওপর থেকে তোলা শত শত ছবি জিগস পাজলের মতো জুড়ে একটা বড় ছবি বানানো।", "জমির উঁচু-নিচুও মাপে, তাই বন্যার পানি কোন দিকে গড়াবে আন্দাজ করা যায়।"],
+"Fixed-wing drone": ["gps@front pressure@head chip@core batt@power motor@back wing@top", "ঘুড়ির মতো: বাতাস ডানার নিচে চাপ দিয়ে ভাসিয়ে রাখে।", "কিছু ফিক্সড-উইং ড্রোন হাতে ছুড়ে দিয়েই আকাশে ওড়ানো যায়।"],
+"Light show drones": ["gps@back light@head chip@core batt@power prop@top", "আকাশের পর্দায় পিক্সেল: প্রতিটা ড্রোন যেন টিভির একটা আলোর বিন্দু।", "হাজার হাজার ড্রোন একসাথে উড়িয়ে আলোর ছবি আঁকার বিশ্বরেকর্ড হয়েছে।"],
+"Storm research drone": ["pressure@front temp@head chip@core batt@power gps@back wing@top", "ঘূর্ণিঝড়ের পেটের ভেতর পাঠানো এক ছোট্ট গোয়েন্দা।", "ঘূর্ণিঝড়ের নিচের দিকের বাতাস মাপা খুব কঠিন; সেখানকার তথ্য পেলে সতর্কবার্তা আরও ভালো হয়।"],
+"FPV racing drone": ["cam@head radio@back imu@core batt@power motor@front prop@top", "নিজেই পাখি হয়ে ওড়ার অনুভূতি, চোখের সামনের চশমার পর্দায়।", "রেসিং ড্রোন চোখের পলকে ঘণ্টায় ১০০ কিলোমিটারের বেশি গতিতে পৌঁছাতে পারে।"],
+"Solar high-altitude drone": ["solar@top batt@power chip@core gps@front motor@head wing@back", "সূর্যমুখী ফুলের মতো দিনে আলো থেকে শক্তি জমায়, রাতে সেটা খরচ করে।", "একটি সৌর ড্রোন না নেমে প্রায় দুই মাস একটানা আকাশে উড়েছিল।"],
+"ROV underwater robot": ["cam@front light@head chip@core cable@back thr@power grip@tool", "সুতোয় বাঁধা ঘুড়ি, তবে আকাশে নয়, পানির নিচে।", "টাইটানিক জাহাজের ধ্বংসাবশেষ দেখতেও এ ধরনের রোবট পাঠানো হয়েছে।"],
+"Autonomous underwater vehicle": ["gps@head sonar@base imu@top chip@core batt@power thr@back", "চোখ বেঁধে পা গুনে গুনে হাঁটার মতো: কত দূর এল তার হিসাব রেখে জায়গা আন্দাজ করে।", "মঙ্গল গ্রহের মানচিত্র আমাদের নিজেদের সাগরতলের মানচিত্রের চেয়েও বেশি বিস্তারিত! তাই এমন রোবট এত দরকারি।"],
+"Saildrone": ["cam@head sail@top solar@back radio@front chip@core batt@power", "মাঝি ছাড়া পালতোলা নৌকা।", "সেইলড্রোন একটা বড় ঘূর্ণিঝড়ের ঠিক ভেতর থেকে ভিডিও পাঠিয়েছিল।"],
+"Argo ocean float": ["radio@head temp@top chip@core batt@power float@base", "সাগরের এক থার্মোমিটার, যে নিজে ডুবে আবার নিজেই ভেসে ওঠে।", "প্রায় দুই কিলোমিটার গভীর পর্যন্ত ডুব দেয়, তারপর ভেসে উঠে উপগ্রহে তথ্য পাঠায়।"],
+"Ship hull cleaning robot": ["cam@head sonar@front chip@core batt@power magnet@base brush@tool", "দাঁত মাজার মতো: নিয়মিত পরিষ্কার না করলে জাহাজের গায়ে শ্যাওলা আর শামুক জমে।", "জাহাজের গায়ে শ্যাওলা জমলে পানি বেশি বাধা দেয়, তাতে জ্বালানি খরচ অনেক বেড়ে যায়।"],
+"River trash collecting boat": ["cam@head gps@back chip@core batt@power thr@base conveyor@front", "এক ভাসমান ঝাড়ুদার, যে মুখ খুলে ময়লা গিলে ফেলে।", "সাগরের প্লাস্টিকের বড় অংশ নদী দিয়েই সেখানে পৌঁছায়, তাই নদীতে ধরতে পারলে সাগর বাঁচে।"],
+"Autonomous ship": ["cam@head radar@top gps@front chip@core batt@power thr@base", "সাগরের এক চালকবিহীন বাস।", "নরওয়েতে একটি বৈদ্যুতিক কন্টেইনার জাহাজ চালক ছাড়াই চলার লক্ষ্য নিয়ে বানানো হয়েছে।"],
+"Robot fish": ["chem@head cam@front chip@core batt@power servo@back", "আসল মাছের দলে মিশে থাকা এক গুপ্তচর।", "কিছু রোবট মাছ পানিতে দূষণ টের পেলে সাথে সাথে তীরে বার্তা পাঠায়।"],
+"Self-driving car": ["lidar@head cam@front radar@back ai@core batt@power motor@base", "চালক যেমন আয়না, জানালা আর হর্নের শব্দ মিলিয়ে সিদ্ধান্ত নেয়, গাড়িও তেমনি অনেক সেন্সর মেলায়।", "ঘন কুয়াশা আর বৃষ্টিতে ক্যামেরা ঝাপসা দেখলেও রাডার পরিষ্কার দেখতে পায়।"],
+"Robotaxi": ["lidar@head cam@front radar@back ai@core batt@power motor@base", "চালক ছাড়া ট্যাক্সি, যেন অদৃশ্য কেউ স্টিয়ারিং ধরে আছে।", "ছাদের ঘূর্ণি LiDAR চারপাশে কয়েকশো মিটার পর্যন্ত 3D ছবি দেখে।"],
+"Sidewalk delivery robot": ["cam@head sonar@front bin@top radio@back chip@core batt@power whl@base", "চাকাওয়ালা টিফিন বাক্স, যে নিজেই ঠিকানা খুঁজে যায়।", "ছয় চাকা থাকায় ফুটপাথের ছোট কিনারাও বেয়ে উঠতে পারে।"],
+"Autonomous truck": ["lidar@head cam@front radar@back ai@core tank@power motor@base", "রাত জেগে মহাসড়কে চলা এক ক্লান্তিহীন ট্রাকচালক।", "আমেরিকার কিছু মহাসড়কে চালকবিহীন ট্রাক মাল বইতে শুরু করেছে।"],
+"Automated metro train": ["radio@head enc@front chip@core plug@power motor@base", "ট্রেন আর লাইনের মধ্যে সারাক্ষণ ফিসফিস আলাপ: “সামনে ফাঁকা তো?”", "ঢাকা মেট্রোরেল চালু হয় ২০২২ সালের ডিসেম্বরে।"],
+"Parking robot": ["lidar@head cam@front chip@core batt@power whl@base lift@top", "নিচ দিয়ে ঢুকে গাড়িকে পিঠে তুলে নেওয়া এক শক্তিশালী কচ্ছপ।", "ফ্রান্সের একটি বিমানবন্দরে এমন রোবট যাত্রীদের গাড়ি পার্ক করেছে।"],
+"Airport guide robot": ["cam@head screen@top scan@front chip@core batt@power whl@base", "চাকার ওপর চলা একটা তথ্যকেন্দ্র।", "দক্ষিণ কোরিয়ার ইনচন বিমানবন্দরে এমন রোবট কয়েকটি ভাষায় যাত্রীদের পথ দেখায়।"],
+"Restaurant serving robot": ["screen@head cam@top sonar@front chip@core batt@power whl@base bin@tool", "ট্রে হাতে এক ওয়েটার, যে কখনো খাবার ফেলে দেয় না।", "অনেক পরিবেশন রোবটের পর্দায় বিড়ালের মুখ থাকে; মাথায় আদর করলে কথা বলে!"]
+});
