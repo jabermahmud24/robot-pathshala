@@ -95,7 +95,7 @@ function seenText() { $('seenCount').textContent = seen.size >= ROB.length ? `�
 function render() {
   const s = q.value.trim().toLowerCase();
   list = ROB.filter(r => (cat === 'all' || r.c === cat) && (!s || (r.n + ' ' + r.e + ' ' + r.d + ' ' + CATS[r.c][0]).toLowerCase().includes(s)));
-  grid.innerHTML = list.length ? list.map(card).join('') : `<p class="empty">“${q.value}” নামে কোনো রোবট পাওয়া যায়নি। অন্য শব্দ লিখে দেখো, যেমন: চাকা, পানি, কৃষি।</p>`;
+  grid.innerHTML = list.length ? list.map(card).join('') : `<p class="empty">“${RB.esc(q.value)}” নামে কোনো রোবট পাওয়া যায়নি। অন্য শব্দ লিখে দেখো, যেমন: চাকা, পানি, কৃষি।</p>`;
   seenText();
 }
 $('catChips').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; cat = b.dataset.c; $('catChips').querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', String(x === b))); render(); });

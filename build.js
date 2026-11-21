@@ -155,7 +155,7 @@ function run() {
   const m = M[mi], L = evaluate(m);
   const fails = L.filter(x => x[0] === 'fail').length, warns = L.filter(x => x[0] === 'warn').length;
   const got = fails ? 0 : 3 - Math.min(2, warns);
-  const name = ($('botName').value || 'রোবু').trim();
+  const name = RB.esc(($('botName').value || 'রোবু').trim());
   $('result').innerHTML = `<ul class="log" id="log"></ul><div id="verdict"></div>`;
   place(); void bot.offsetWidth;
   bot.style.transition = reduce ? 'none' : 'left 2.6s ease-in-out';
