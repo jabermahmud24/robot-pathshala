@@ -34,7 +34,7 @@ const S = {
   'কুইজ: কোন রোবট?': 'Quiz: which robot?', 'আবার খেলো': 'Play again',
   'তোমার সনদ': 'Your certificate',
   'সব ৮টা রোবট মিশন জিতলে তোমার নাম লেখা সনদ খুলে যাবে। ছবি হিসেবে রেখে দাও, বা প্রিন্ট করে বাবা-মা আর শিক্ষককে দেখাও!': 'Win all 8 robot missions to unlock a certificate with your name on it. Save it as a picture, or print it to show your parents and teachers!',
-  'সনদে তোমার নাম': 'Your name on the certificate', 'যেমন: নুসরাত জাহান': 'e.g. Nusrat Jahan', 'সনদে নাম বসাও': 'Put my name on it', 'ছবি নামাও': 'Save picture', 'প্রিন্ট করো': 'Print', 'সনদপত্র': 'Certificate',
+  'সনদে তোমার নাম': 'Your name on the certificate', 'যেমন: John Doe': 'e.g. John Doe', 'দ্রষ্টব্য: এই সাইটের কিছু তথ্য পুরোপুরি নির্ভুল না-ও হতে পারে। রোবট প্রযুক্তি খুব দ্রুত বদলায়, তাই গুরুত্বপূর্ণ তথ্য শিক্ষক বা নির্ভরযোগ্য উৎস থেকে মিলিয়ে নিও।': 'Note: Some information on this site may not be fully accurate. Robot technology changes very fast, so check important facts with a teacher or a trusted source.', 'সনদে নাম বসাও': 'Put my name on it', 'ছবি নামাও': 'Save picture', 'প্রিন্ট করো': 'Print', 'সনদপত্র': 'Certificate',
   'বাংলাদেশের ৭ থেকে ১৮ বছরের শিক্ষার্থীদের জন্য রোবটিক্স শেখার খেলাঘর। ছবিগুলো শেখানোর জন্য আঁকা নকশা, আসল রোবটের হুবহু ছবি নয়।': 'A robotics playground for students aged 7 to 18 in Bangladesh. The pictures are drawings made for learning, not exact copies of the real robots.',
   'রোবটের ভেতরের নীল নকশা': "Blueprint of the robot's insides", 'বাইরে': 'Outside', 'ভেতরে': 'Inside', 'বন্ধ করো': 'Close',
   'ছবির ওপর আঙুল টেনে রোবটের ভেতরটা দেখো': 'Drag across the picture to see inside the robot',

@@ -138,6 +138,7 @@ footer{background:var(--ink);color:var(--bg)}
 .toast .x{border:0;background:transparent;color:inherit;font-size:22px;width:36px;height:36px}
 .ioshelp ol{padding-left:1.3em;display:grid;gap:6px;margin:12px 0 16px}
 footer a{color:inherit}
+.disclaimer{margin-top:14px;padding-top:12px;border-top:1px solid color-mix(in srgb,var(--bg) 25%,transparent);font-size:14px;opacity:.85}
 .missions{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 12px;margin-top:14px}
 .mcard{flex:none;min-width:150px;text-align:left;border:2px solid var(--line);background:var(--card);border-radius:18px;padding:10px 14px;display:grid;gap:2px}
 .mcard b{font:700 18px "Baloo Da 2",sans-serif}.mcard .st{color:var(--coral);font-size:16px;letter-spacing:2px}
@@ -373,7 +374,7 @@ footer a{color:inherit}
   <div class="cathead"><div><h2>তোমার সনদ</h2><p class="lead">সব ৮টা রোবট মিশন জিতলে তোমার নাম লেখা সনদ খুলে যাবে। ছবি হিসেবে রেখে দাও, বা প্রিন্ট করে বাবা-মা আর শিক্ষককে দেখাও!</p></div></div>
   <div class="cert">
     <div class="certL"><div id="cProg"></div>
-      <label for="cName" class="nm">সনদে তোমার নাম</label><input id="cName" type="text" maxlength="30" placeholder="যেমন: নুসরাত জাহান">
+      <label for="cName" class="nm">সনদে তোমার নাম</label><input id="cName" type="text" maxlength="30" placeholder="যেমন: John Doe">
       <div class="mzbtns"><button class="btn go" id="cMake">সনদে নাম বসাও</button><button class="btn alt" id="cSave">ছবি নামাও</button><button class="btn alt" id="cPrint">প্রিন্ট করো</button></div></div>
     <div class="certR"><div class="cwrap"><canvas id="cCanvas" width="1600" height="1131" aria-label="সনদপত্র"></canvas><div class="lock" id="cLock"></div></div></div>
   </div>
@@ -381,6 +382,7 @@ footer a{color:inherit}
 <footer class="band"><div class="wrap">
   <h3>রোবট পাঠশালা</h3>
   <p>বাংলাদেশের ৭ থেকে ১৮ বছরের শিক্ষার্থীদের জন্য রোবটিক্স শেখার খেলাঘর। ছবিগুলো শেখানোর জন্য আঁকা নকশা, আসল রোবটের হুবহু ছবি নয়।</p>
+  <p class="disclaimer">দ্রষ্টব্য: এই সাইটের কিছু তথ্য পুরোপুরি নির্ভুল না-ও হতে পারে। রোবট প্রযুক্তি খুব দ্রুত বদলায়, তাই গুরুত্বপূর্ণ তথ্য শিক্ষক বা নির্ভরযোগ্য উৎস থেকে মিলিয়ে নিও।</p>
 </div></footer>
 
 <dialog id="dlg"><div class="mtop" id="split">
