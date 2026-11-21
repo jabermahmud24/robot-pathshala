@@ -1,6 +1,6 @@
 // রোবট পাঠশালা অফলাইন সার্ভিস ওয়ার্কার।
 // সাইটের কোনো ফাইল বদলালে VERSION বাড়াও, তাহলে সবার কাছে নতুন সংস্করণ পৌঁছাবে।
-const VERSION = 'v3';
+const VERSION = 'v4';
 const CACHE = 'robot-pathshala-' + VERSION;
 const FONTS = 'robot-pathshala-fonts';
 const FILES = [
