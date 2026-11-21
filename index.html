@@ -4,6 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>রোবট পাঠশালা</title>
+<meta name="description" content="বাংলায় খেলতে খেলতে রোবট শেখা: রোবটের ভেতর, ১০০টি রোবট, মিশন গেম আর কুইজ।">
+<meta name="theme-color" content="#ffcd1f">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/favicon-64.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="রোবট পাঠশালা">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -122,6 +131,11 @@ dialog::backdrop{background:rgba(20,18,50,.55)}
 .ans.no{border-color:var(--coral);background:color-mix(in srgb,var(--coral) 15%,var(--card))}
 .stars{font-size:26px;letter-spacing:4px;color:var(--coral)}
 footer{background:var(--ink);color:var(--bg)}
+.install{border:0;border-radius:999px;background:var(--coral);color:#fff;font-weight:700;font-size:15px;padding:8px 16px;min-height:40px}
+.toast{position:fixed;left:50%;bottom:max(16px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:50;display:flex;align-items:center;gap:10px;background:var(--ink);color:var(--bg);border-radius:16px;padding:10px 12px 10px 16px;box-shadow:0 6px 24px rgba(0,0,0,.25);width:max-content;max-width:calc(100vw - 32px);font-weight:600}
+.toast[hidden]{display:none}.toast .do{border:0;border-radius:10px;background:var(--sun);color:var(--sunInk);font-weight:700;padding:6px 12px;min-height:36px}
+.toast .x{border:0;background:transparent;color:inherit;font-size:22px;width:36px;height:36px}
+.ioshelp ol{padding-left:1.3em;display:grid;gap:6px;margin:12px 0 16px}
 footer a{color:inherit}
 .missions{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 12px;margin-top:14px}
 .mcard{flex:none;min-width:150px;text-align:left;border:2px solid var(--line);background:var(--card);border-radius:18px;padding:10px 14px;display:grid;gap:2px}
@@ -176,6 +190,7 @@ footer a{color:inherit}
 <nav><div class="wrap">
   <a class="logo" href="#ghor"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect x="5" y="8" width="20" height="16" rx="5" fill="#ff5a3c"/><circle cx="11" cy="16" r="3" fill="#fff"/><circle cx="19" cy="16" r="3" fill="#fff"/><line x1="15" y1="3" x2="15" y2="8" stroke="#22b5e8" stroke-width="3"/><circle cx="15" cy="3" r="2.5" fill="#22b5e8"/></svg>রোবট পাঠশালা</a>
   <div class="links"><a href="#ghor">রোবটের ভেতর</a><a href="#chokro">কীভাবে ভাবে</a><a href="#robot">১০০ রোবট</a><a href="#banao">বানাও</a><a href="#quiz">কুইজ</a></div>
+  <button class="install" id="installBtn" hidden>অ্যাপ হিসেবে নাও</button>
 </div></nav>
 
 <header class="hero band" id="ghor"><div class="wrap">
@@ -276,6 +291,10 @@ footer a{color:inherit}
 <a class="photo" id="mPhoto" href="#" target="_blank" rel="noopener">আসল রোবটের ছবি দেখো (উইকিপিডিয়া) ↗</a>
 <div class="mnav"><button class="btn alt" id="mPrev">← আগের</button><button class="btn alt" id="mNext">পরের →</button></div></div></dialog>
 
+<div class="toast" id="toast" hidden role="status"><span></span><button class="do" hidden></button><button class="x" aria-label="বন্ধ করো">×</button></div>
+<dialog id="iosHelp" class="ioshelp"><div class="mbody"><h2 style="font-size:26px">আইফোনে অ্যাপ হিসেবে রাখো</h2>
+<ol><li>Safari ব্রাউজারে এই সাইটটা খোলো।</li><li>নিচের <b>শেয়ার</b> বোতামে চাপ দাও (চারকোনা বাক্স থেকে ওপরের দিকে তীর)।</li><li>তালিকা থেকে <b>Add to Home Screen</b> বেছে নাও।</li><li>ওপরে ডান কোণে <b>Add</b> চাপো। হোম স্ক্রিনে রোবট পাঠশালার আইকন চলে আসবে!</li></ol>
+<button class="btn" id="iosClose">বুঝেছি</button></div></dialog>
 <script src="r1.js"></script>
 <script src="r2.js"></script>
 <script src="r3.js"></script>
@@ -289,5 +308,6 @@ footer a{color:inherit}
 <script src="app2.js"></script>
 <script src="missions.js"></script>
 <script src="build.js"></script>
+<script src="pwa.js"></script>
 </body>
 </html>
