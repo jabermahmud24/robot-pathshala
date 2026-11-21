@@ -72,6 +72,7 @@ const C = {
   rad: ['বিকিরণ সেন্সর', 'চোখে দেখা যায় না এমন বিপজ্জনক বিকিরণ মাপে।', 'dot'],
   color: ['রং সেন্সর', 'নিচের জিনিসটা কোন রঙের তা চেনে।', 'eye']
 };
+if (RB.en && window.ENC) Object.keys(C).forEach(k => { if (ENC.comps[k]) { C[k][0] = ENC.comps[k][0]; C[k][1] = ENC.comps[k][1]; } });
 RB.COMP = C;
 const SL = {
   disc: { head: [100, 84], top: [70, 90], front: [152, 96], back: [48, 96], core: [100, 97], power: [124, 99], base: [80, 106], tool: [140, 108] },
@@ -127,12 +128,13 @@ RB.blue = (shape, parts, act = -1) => {
   for (let y = 0; y <= 140; y += 10) g += `<line x1="0" y1="${y}" x2="200" y2="${y}" stroke="#cfe8ff" stroke-opacity="${y % 50 ? .07 : .16}" stroke-width=".5"/>`;
   const pos = RB.place(shape, parts);
   const dots = pos.map(([x, y], i) => `${i === act ? `<circle class="pulse" cx="${x}" cy="${y}" r="11" fill="none" stroke="#ffcd1f" stroke-width="1.6"/>` : ''}<circle cx="${x}" cy="${y}" r="7.5" fill="${i === act ? '#ffcd1f' : '#0b3a63'}" stroke="${i === act ? '#ffcd1f' : '#fff'}" stroke-width="1.3"/><text x="${x}" y="${y + 3}" text-anchor="middle" font-size="8.5" font-weight="700" fill="${i === act ? '#1d1b3a' : '#fff'}" font-family="Hind Siliguri,sans-serif">${RB.bn(i + 1)}</text>`).join('');
-  return `<rect width="200" height="140" fill="#0b3a63"/>${g}<g opacity=".4">${RB.S[shape]('#a8d8ff')}</g><rect x="4" y="4" width="192" height="132" fill="none" stroke="#cfe8ff" stroke-opacity=".35" stroke-width=".6"/><text x="9" y="15" font-size="7" fill="#cfe8ff" fill-opacity=".8" font-family="Hind Siliguri,sans-serif">নীল নকশা · ভেতরের অংশ</text>${dots}`;
+  return `<rect width="200" height="140" fill="#0b3a63"/>${g}<g opacity=".4">${RB.S[shape]('#a8d8ff')}</g><rect x="4" y="4" width="192" height="132" fill="none" stroke="#cfe8ff" stroke-opacity=".35" stroke-width=".6"/><text x="9" y="15" font-size="7" fill="#cfe8ff" fill-opacity=".8" font-family="Hind Siliguri,sans-serif">${RB.L('নীল নকশা · ভেতরের অংশ', 'Blueprint · inside parts')}</text>${dots}`;
 };
 const X = window.X || {};
 RB.ROB.forEach(r => {
   const x = X[r.e] || ['chip@core batt@power motor@base', '', ''];
   r.p = x[0].split(/\s+/).filter(Boolean).map(t => t.split('@')).filter(([k]) => C[k]);
-  r.a = x[1]; r.f = x[2];
+  const ex = RB.en && window.RE && window.RE[r.e];
+  r.a = ex ? ex[4] : x[1]; r.f = ex ? ex[5] : x[2];
 });
 }

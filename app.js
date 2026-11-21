@@ -3,7 +3,8 @@ window.RB = {};
 const RB = window.RB;
 const D = '#1d1b3a';
 RB.esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-RB.bn = n => String(n).replace(/\d/g, d => '০১২৩৪৫৬৭৮৯'[d]);
+RB.lang = window.LANG || 'bn'; RB.en = RB.lang === 'en'; RB.L = (b, e) => RB.en ? e : b;
+RB.bn = n => RB.en ? String(n) : String(n).replace(/\d/g, d => '০১২৩৪৫৬৭৮৯'[d]);
 RB.store = {
   get(k, f) { try { const v = localStorage.getItem(k); return v === null ? f : JSON.parse(v); } catch (e) { return f; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
@@ -17,7 +18,8 @@ RB.CATS = {
   air: ['আকাশ ও ড্রোন', '#1ea7dc'], water: ['পানি ও সমুদ্র', '#0b93a6'], transport: ['চলাচল ও ডেলিভারি', '#e8432f'],
   rescue: ['উদ্ধার ও নিরাপত্তা', '#c2410c'], learn: ['শেখা ও খেলা', '#b545d6'], nature: ['প্রকৃতি থেকে শেখা', '#6aa312']
 };
-RB.ROB = (window.R || []).map((a, i) => ({ id: i, n: a[0], e: a[1], c: a[2], s: a[3], d: a[4], w: a[5], m: a[6], t: a[7] }));
+if (RB.en && window.ENC) Object.keys(RB.CATS).forEach(k => { RB.CATS[k][0] = ENC.cats[k] || RB.CATS[k][0]; });
+RB.ROB = (window.R || []).map((a, i) => { const x = RB.en && window.RE ? window.RE[a[1]] : null; return { id: i, n: x ? a[1] : a[0], e: a[1], bnName: a[0], c: a[2], s: a[3], d: x ? x[0] : a[4], w: x ? x[1] : a[5], m: x ? x[2] : a[6], t: x ? x[3] : a[7] }; });
 
 const eye = (x, y, r = 5) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff"/><circle cx="${x + .6}" cy="${y}" r="${r * .48}" fill="${D}"/>`;
 const wh = (x, y, r = 13) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${D}"/><circle cx="${x}" cy="${y}" r="${r * .42}" fill="#c9d1e3"/>`;
@@ -83,9 +85,10 @@ const PARTS = {
     'রোবট ওয়াই-ফাই, ব্লুটুথ বা রেডিও তরঙ্গে তথ্য পাঠায়। ড্রোনের ভিডিও এভাবেই চালকের ফোনে আসে।',
     'দূরত্ব বাড়লে সংকেত দেরিতে পৌঁছায় (ল্যাটেন্সি)। মঙ্গলে সংকেত যেতে কয়েক মিনিট লাগে, তাই রোভারকে অনেক সিদ্ধান্ত নিজেই নিতে হয়। এজন্যই স্বয়ংক্রিয়তা (অটোনমি) দরকার।']]
 };
+if (RB.en && window.ENC) Object.keys(PARTS).forEach(k => { PARTS[k] = ENC.parts[k]; });
 const M = '#e3e9f4', M2 = '#b9c4d8';
 const stage = document.getElementById('stage');
-stage.innerHTML = `<svg viewBox="0 0 420 440" preserveAspectRatio="xMidYMid meet" role="img" aria-label="অংশ চেনার রোবট">
+stage.innerHTML = `<svg viewBox="0 0 420 440" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${RB.L('অংশ চেনার রোবট', 'Robot with parts to explore')}">
 <style>.spin{transform-box:fill-box;transform-origin:center}.part.on .spin{animation:spin 1.4s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.wave{opacity:0}.part.on .wave{animation:wave 1.6s ease-out infinite}@keyframes wave{0%{opacity:.9;r:12}100%{opacity:0;r:44}}</style>
 <ellipse cx="210" cy="414" rx="150" ry="14" fill="#000" opacity=".14"/>
 <g class="part" data-p="antenna"><rect class="hl" x="180" y="6" width="60" height="76" rx="26" fill="transparent" stroke="transparent"/><circle class="wave" cx="210" cy="32" r="12" fill="none" stroke="#ff5a3c" stroke-width="3"/><line x1="210" y1="40" x2="210" y2="80" stroke="${D}" stroke-width="7" stroke-linecap="round"/><circle cx="210" cy="32" r="12" fill="#ff5a3c"/><circle cx="206" cy="28" r="4" fill="#fff" opacity=".6"/></g>
@@ -107,7 +110,7 @@ function showPart(k) {
   if (RB.started) RB.mark('part_' + k);
   stage.querySelectorAll('.part').forEach(g => g.classList.toggle('on', g.dataset.p === k));
   chips.querySelectorAll('.chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.p === k)));
-  document.getElementById('pTag').textContent = 'কাজ: ' + p[1];
+  document.getElementById('pTag').textContent = RB.L('কাজ: ', 'Job: ') + p[1];
   document.getElementById('pTitle').textContent = p[0];
   document.getElementById('pText').textContent = p[3][RB.lv - 1];
   document.getElementById('pAnalogy').textContent = p[2];

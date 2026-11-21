@@ -4,8 +4,8 @@ const $ = id => document.getElementById(id);
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const D = '#1d1b3a', CELL = 40;
 const BL = {
-  fwd: ['সামনে যাও', 'fwd'], right: ['ডানে ঘোরো ↻', 'turn'], left: ['বামে ঘোরো ↺', 'turn'],
-  rep: ['বারবার করো', 'rep'], while: ['লক্ষ্যে না পৌঁছানো পর্যন্ত বারবার', 'whl'], if: ['যদি … নাহলে', 'iff']
+  fwd: [L('সামনে যাও', 'Move forward'), 'fwd'], right: [L('ডানে ঘোরো ↻', 'Turn right ↻'), 'turn'], left: [L('বামে ঘোরো ↺', 'Turn left ↺'), 'turn'],
+  rep: [L('বারবার করো', 'Repeat'), 'rep'], while: [L('লক্ষ্যে না পৌঁছানো পর্যন্ত বারবার', 'Repeat until goal'), 'whl'], if: [L('যদি … নাহলে', 'If … else'), 'iff']
 };
 let li = store.get('mzLevel', 0), best = store.get('maze', {}), saved = store.get('mzProg', {});
 let prog = [], target = 'r', running = false, timer = null, ids = new WeakMap(), robo = null, angle = 0;
@@ -21,7 +21,7 @@ const stars = n => '★'.repeat(n) + '☆'.repeat(3 - n);
 
 /* ----- level bar ----- */
 function renderLevels() {
-  $('mzLv').innerHTML = MZ.L.map((l, i) => `<button class="lvb" data-i="${i}" aria-pressed="${i === li}" ${unlocked(i) ? '' : 'disabled'}><b>${bn(i + 1)}</b><span>${unlocked(i) ? (best[i] ? stars(best[i]) : 'নতুন') : 'তালা'}</span></button>`).join('');
+  $('mzLv').innerHTML = MZ.L.map((l, i) => `<button class="lvb" data-i="${i}" aria-pressed="${i === li}" ${unlocked(i) ? '' : 'disabled'}><b>${bn(i + 1)}</b><span>${unlocked(i) ? (best[i] ? stars(best[i]) : L('নতুন', 'New')) : L('তালা', 'Locked')}</span></button>`).join('');
 }
 
 /* ----- board ----- */
@@ -50,21 +50,21 @@ function place(y, x, anim) {
 function blk(b, p) {
   ids.set(b, p);
   const [label, cls] = BL[b.t];
-  const x = `<button class="x" data-act="del" data-p="${p}" aria-label="মুছে ফেলো">×</button>`;
-  if (b.t === 'fwd') return `<div class="blk ${cls}" data-id="${p}"><span>${label}</span><button class="pill" data-act="n" data-p="${p}">${bn(b.n || 1)} ঘর</button>${x}</div>`;
+  const x = `<button class="x" data-act="del" data-p="${p}" aria-label="${L('মুছে ফেলো', 'Delete')}">×</button>`;
+  if (b.t === 'fwd') return `<div class="blk ${cls}" data-id="${p}"><span>${label}</span><button class="pill" data-act="n" data-p="${p}">${bn(b.n || 1)} ${L('ঘর', (b.n || 1) > 1 ? 'squares' : 'square')}</button>${x}</div>`;
   if (b.t === 'right' || b.t === 'left') return `<div class="blk ${cls}" data-id="${p}"><span>${label}</span>${x}</div>`;
-  if (b.t === 'rep') return `<div class="blk ${cls} box" data-id="${p}"><div class="bh"><span>বারবার করো</span><button class="pill" data-act="n" data-p="${p}">${bn(b.n || 2)} বার</button>${x}</div>${slot(b.body, p + '.body')}</div>`;
+  if (b.t === 'rep') return `<div class="blk ${cls} box" data-id="${p}"><div class="bh"><span>${L('বারবার করো', 'Repeat')}</span><button class="pill" data-act="n" data-p="${p}">${bn(b.n || 2)} ${L('বার', 'times')}</button>${x}</div>${slot(b.body, p + '.body')}</div>`;
   if (b.t === 'while') return `<div class="blk ${cls} box" data-id="${p}"><div class="bh"><span>${label}</span>${x}</div>${slot(b.body, p + '.body')}</div>`;
-  return `<div class="blk ${cls} box" data-id="${p}"><div class="bh"><span>যদি</span><button class="pill" data-act="c" data-p="${p}">${MZ.COND[b.c]}</button>${x}</div><div class="blab">তাহলে</div>${slot(b.then, p + '.then')}<div class="blab">নাহলে</div>${slot(b.else, p + '.else')}</div>`;
+  return `<div class="blk ${cls} box" data-id="${p}"><div class="bh"><span>${L('যদি', 'If')}</span><button class="pill" data-act="c" data-p="${p}">${MZ.COND[b.c]}</button>${x}</div><div class="blab">${L('তাহলে', 'then')}</div>${slot(b.then, p + '.then')}<div class="blab">${L('নাহলে', 'else')}</div>${slot(b.else, p + '.else')}</div>`;
 }
 function slot(list, path) {
-  return `<div class="slot">${list.map((b, i) => blk(b, path + '.' + i)).join('')}<button class="drop${target === path ? ' on' : ''}" data-act="tgt" data-p="${path}">${target === path ? '+ নতুন ব্লক এখানে বসবে' : '+ এখানে বসাও'}</button></div>`;
+  return `<div class="slot">${list.map((b, i) => blk(b, path + '.' + i)).join('')}<button class="drop${target === path ? ' on' : ''}" data-act="tgt" data-p="${path}">${target === path ? L('+ নতুন ব্লক এখানে বসবে', '+ New blocks go here') : L('+ এখানে বসাও', '+ Put blocks here')}</button></div>`;
 }
 function renderProg() {
   ids = new WeakMap();
-  $('mzProg').innerHTML = prog.length ? slot(prog, 'r') : `<p class="empty2">ওপরের ব্লকে চাপ দিয়ে প্রোগ্রাম বানাও।</p>${slot(prog, 'r')}`;
+  $('mzProg').innerHTML = prog.length ? slot(prog, 'r') : `<p class="empty2">${L('ওপরের ব্লকে চাপ দিয়ে প্রোগ্রাম বানাও।', 'Tap the blocks above to build a program.')}</p>${slot(prog, 'r')}`;
   const n = MZ.count(prog), par = MZ.L[li].par;
-  $('mzCount').textContent = `${bn(n)}টি ব্লক · ৩ তারার জন্য ${bn(par)}টি বা কম`;
+  $('mzCount').textContent = L(`${bn(n)}টি ব্লক · ৩ তারার জন্য ${bn(par)}টি বা কম`, `${n} blocks · ${par} or fewer for 3 stars`);
   saved[li] = prog; store.set('mzProg', saved);
 }
 function renderPal() {
@@ -73,14 +73,14 @@ function renderPal() {
 function validTarget() { try { listAt(target); } catch (e) { target = 'r'; } }
 
 /* ----- running ----- */
-function stop() { clearTimeout(timer); timer = null; running = false; $('mz').classList.remove('running'); $('mzRun').textContent = 'চালাও ▶'; }
+function stop() { clearTimeout(timer); timer = null; running = false; $('mz').classList.remove('running'); $('mzRun').textContent = L('চালাও ▶', 'Run ▶'); }
 function resetBoard() { stop(); drawBoard(); document.querySelectorAll('#mzProg .now').forEach(e => e.classList.remove('now')); }
 function msg(html, kind) { $('mzMsg').innerHTML = html; $('mzMsg').className = 'mzmsg ' + (kind || ''); }
 function run() {
   if (running) { resetBoard(); msg(''); return; }
-  if (!prog.length) { msg('আগে কিছু ব্লক যোগ করো!', 'warn'); return; }
-  resetBoard(); msg('রোবট চলছে…');
-  running = true; $('mz').classList.add('running'); $('mzRun').textContent = 'থামাও ■';
+  if (!prog.length) { msg(L('আগে কিছু ব্লক যোগ করো!', 'Add some blocks first!'), 'warn'); return; }
+  resetBoard(); msg(L('রোবট চলছে…', 'The robot is running…'));
+  running = true; $('mz').classList.add('running'); $('mzRun').textContent = L('থামাও ■', 'Stop ■');
   const lv = MZ.L[li], P = MZ.parse(lv), it = MZ.run(lv, prog);
   let lastSt = null;
   const tick = () => {
@@ -106,28 +106,28 @@ function finish(st, lv, P) {
     const got = MZ.stars(lv, prog, st, P);
     if (got > (best[li] || 0)) { best[li] = got; store.set('maze', best); RB.ping && RB.ping(); }
     const tips = [];
-    if (st.got.size < P.bat.length) tips.push(`পথে ${bn(P.bat.length - st.got.size)}টা ব্যাটারি রয়ে গেছে; সব তুললে আরও একটা তারা।`);
-    if (MZ.count(prog) > lv.par) tips.push(`${bn(lv.par)}টি বা কম ব্লকে পারবে? তাহলে আরও একটা তারা।`);
-    const next = li + 1 < MZ.L.length ? `<button class="btn" id="mzNext">পরের লেভেল →</button>` : '<b>তুমি সব লেভেল শেষ করেছ! সত্যিকারের প্রোগ্রামার!</b>';
-    msg(`<span class="st">${stars(got)}</span> দারুণ! রোবট চার্জিং স্টেশনে পৌঁছেছে! ${tips.join(' ')} ${next}`, 'win');
+    if (st.got.size < P.bat.length) tips.push(L(`পথে ${bn(P.bat.length - st.got.size)}টা ব্যাটারি রয়ে গেছে; সব তুললে আরও একটা তারা।`, `${P.bat.length - st.got.size} battery left on the way; collect them all for another star.`));
+    if (MZ.count(prog) > lv.par) tips.push(L(`${bn(lv.par)}টি বা কম ব্লকে পারবে? তাহলে আরও একটা তারা।`, `Can you do it in ${lv.par} blocks or fewer? That's another star.`));
+    const next = li + 1 < MZ.L.length ? `<button class="btn" id="mzNext">${L('পরের লেভেল →', 'Next level →')}</button>` : `<b>${L('তুমি সব লেভেল শেষ করেছ! সত্যিকারের প্রোগ্রামার!', 'You finished every level! A real programmer!')}</b>`;
+    msg(`<span class="st">${stars(got)}</span> ${L('দারুণ! রোবট চার্জিং স্টেশনে পৌঁছেছে!', 'Brilliant! The robot reached the charging station!')} ${tips.join(' ')} ${next}`, 'win');
     renderLevels();
-  } else if (st.crash) { msg('ধাক্কা! সামনে দেয়াল ছিল। রোবট যে ব্লকে থেমেছে, সেটা দেখে প্রোগ্রাম ঠিক করো।', 'lose'); }
-  else if (st.loop) { msg('রোবট একই জায়গায় ঘুরপাক খাচ্ছে! লুপের ভেতরে এমন কিছু রাখো যাতে রোবট এগোয়।', 'lose'); }
-  else msg('প্রোগ্রাম শেষ, কিন্তু রোবট এখনো লক্ষ্যে পৌঁছায়নি। আরও ব্লক যোগ করো।', 'warn');
+  } else if (st.crash) { msg(L('ধাক্কা! সামনে দেয়াল ছিল। রোবট যে ব্লকে থেমেছে, সেটা দেখে প্রোগ্রাম ঠিক করো।', 'Bump! There was a wall ahead. Look at the block where the robot stopped and fix your program.'), 'lose'); }
+  else if (st.loop) { msg(L('রোবট একই জায়গায় ঘুরপাক খাচ্ছে! লুপের ভেতরে এমন কিছু রাখো যাতে রোবট এগোয়।', 'The robot is going round in circles! Put something inside the loop that moves it forward.'), 'lose'); }
+  else msg(L('প্রোগ্রাম শেষ, কিন্তু রোবট এখনো লক্ষ্যে পৌঁছায়নি। আরও ব্লক যোগ করো।', 'The program finished, but the robot hasn\'t reached the goal yet. Add more blocks.'), 'warn');
 }
 
 function load(i) {
   stop(); li = i; store.set('mzLevel', li);
   const lv = MZ.L[li];
   prog = clone(saved[li] || []); target = 'r';
-  $('mzT').textContent = `লেভেল ${bn(li + 1)}: ${lv.t}`; $('mzLearn').textContent = lv.learn;
+  $('mzT').textContent = `${L('লেভেল', 'Level')} ${bn(li + 1)}: ${lv.t}`; $('mzLearn').textContent = lv.learn;
   renderLevels(); renderPal(); renderProg(); drawBoard(); msg('');
 }
 
 $('mzLv').addEventListener('click', e => { const c = e.target.closest('.lvb'); if (c && !c.disabled) load(+c.dataset.i); });
 $('mzPal').addEventListener('click', e => {
   const c = e.target.closest('[data-add]'); if (!c || running) return;
-  if (MZ.count(prog) >= 40) { msg('ব্লক অনেক বেশি হয়ে গেছে! লুপ ব্যবহার করে ছোট করো।', 'warn'); return; }
+  if (MZ.count(prog) >= 40) { msg(L('ব্লক অনেক বেশি হয়ে গেছে! লুপ ব্যবহার করে ছোট করো।', 'Too many blocks! Use a loop to make it shorter.'), 'warn'); return; }
   validTarget();
   const t = c.dataset.add, b = { t };
   if (t === 'fwd') b.n = 1; if (t === 'rep') { b.n = 2; b.body = []; } if (t === 'while') b.body = [];

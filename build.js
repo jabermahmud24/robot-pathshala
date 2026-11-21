@@ -3,14 +3,27 @@ const RB = window.RB, bn = RB.bn, P = window.BP, M = window.BM;
 const $ = id => document.getElementById(id);
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const D = '#1d1b3a';
-const GROUPS = [['move', 'কীভাবে চলবে?', 1], ['sense', 'কী দিয়ে টের পাবে?', 3], ['tool', 'হাতে কী থাকবে?', 1], ['power', 'শক্তি আসবে কোথা থেকে?', 1], ['brain', 'কেমন মস্তিষ্ক?', 1]];
+const T = RB.L;
+// English mode: swap in English text, keep numbers and rules
+if (RB.en && window.ENM) {
+  Object.keys(P).forEach(g => Object.keys(P[g]).forEach(k => { const e = ENM.parts[k]; if (e) { P[g][k][0] = e[0]; P[g][k][4] = e[1]; } }));
+  M.forEach(m => {
+    const e = ENM.missions[m.id]; if (!e) return;
+    m.t = e.t; m.s = e.s; m.hint = e.hint;
+    Object.keys(m.mv).forEach(k => { if (e.mv[k]) m.mv[k] = m.mv[k].split(':')[0] + ':' + e.mv[k]; });
+    m.need.forEach((n, i) => { if (e.need[i]) { n[1] = e.need[i][0]; n[2] = e.need[i][1]; } });
+    (m.opt || []).forEach((o, i) => { if (e.opt[i]) o[1] = e.opt[i]; });
+    Object.keys(m.bad || {}).forEach(k => { if (e.bad[k]) m.bad[k] = m.bad[k].split(':')[0] + ':' + e.bad[k]; });
+  });
+}
+const GROUPS = [['move', T('কীভাবে চলবে?', 'How will it move?'), 1], ['sense', T('কী দিয়ে টের পাবে?', 'What will it sense with?'), 3], ['tool', T('হাতে কী থাকবে?', 'What tool will it hold?'), 1], ['power', T('শক্তি আসবে কোথা থেকে?', 'Where will its power come from?'), 1], ['brain', T('কেমন মস্তিষ্ক?', 'What kind of brain?'), 1]];
 const store = RB.store;
 let b = Object.assign({ move: 'wheel', sense: ['cam'], tool: 'none', power: 'sbat', brain: 'micro' }, store.get('bot', {}));
 if (!Array.isArray(b.sense)) b.sense = ['cam'];
 let mi = Math.max(0, M.findIndex(m => m.id === store.get('mission', 'flood')));
 let best = store.get('stars', {});
 const f1 = n => bn(Math.round(n * 10) / 10);
-const dur = m => m >= 60 ? `${f1(m / 60)} ঘণ্টা` : `${bn(Math.round(m))} মিনিট`;
+const dur = m => m >= 60 ? `${f1(m / 60)} ${T('ঘণ্টা', 'hours')}` : `${bn(Math.round(m))} ${T('মিনিট', 'minutes')}`;
 
 function stats() {
   const parts = [P.move[b.move], ...b.sense.map(k => P.sense[k]), P.tool[b.tool], P.power[b.power], P.brain[b.brain]];
@@ -25,22 +38,22 @@ function evaluate(m) {
   const L = [], st = stats();
   L.push(sp(m.mv[b.move]));
   m.need.forEach(([any, ok, no]) => L.push(any.some(has) ? ['ok', ok] : ['fail', no]));
-  if (b.move === 'prop' && st.kg > 6) L.push(['fail', `রোবটের ওজন ${f1(st.kg)} কেজি। প্রপেলার ৬ কেজির বেশি তুলতে পারে না; হালকা কিছু বাছো।`]);
+  if (b.move === 'prop' && st.kg > 6) L.push(['fail', T(`রোবটের ওজন ${f1(st.kg)} কেজি। প্রপেলার ৬ কেজির বেশি তুলতে পারে না; হালকা কিছু বাছো।`, `The robot weighs ${f1(st.kg)} kg. Propellers can't lift more than 6 kg; choose lighter parts.`)]);
   const pw = b.power, bad = m.bad || {};
   if (!bad[pw]) {
-    if (pw === 'plug') L.push(b.move === 'fixed' ? ['ok', 'দেয়ালের সকেট থেকে সারাদিন বিদ্যুৎ পেল।'] : ['warn', 'চলন্ত রোবটের পেছনে তার টানলে জড়িয়ে যায়, আর বেশি দূরে যাওয়া যায় না।']);
-    else if (pw === 'rtg') L.push(['ok', 'পারমাণবিক ব্যাটারি বছরের পর বছর বিদ্যুৎ দেবে।']);
-    else if (pw === 'solar' && m.sun) L.push(['ok', 'রোদে নিজেই চার্জ হয়ে টানা কাজ চালিয়ে গেল।']);
+    if (pw === 'plug') L.push(b.move === 'fixed' ? ['ok', T('দেয়ালের সকেট থেকে সারাদিন বিদ্যুৎ পেল।', 'It got power from the wall socket all day.')] : ['warn', T('চলন্ত রোবটের পেছনে তার টানলে জড়িয়ে যায়, আর বেশি দূরে যাওয়া যায় না।', 'A cable trailing behind a moving robot gets tangled, and it can\'t go far.')]);
+    else if (pw === 'rtg') L.push(['ok', T('পারমাণবিক ব্যাটারি বছরের পর বছর বিদ্যুৎ দেবে।', 'The nuclear battery will give power for years.')]);
+    else if (pw === 'solar' && m.sun) L.push(['ok', T('রোদে নিজেই চার্জ হয়ে টানা কাজ চালিয়ে গেল।', 'It charged itself in the sun and kept working.')]);
     else {
-      if (pw === 'solar') L.push(['warn', 'এখানে রোদ নেই, তাই সৌর প্যানেল শুধু একটা ব্যাটারির মতো কাজ করল।']);
-      if (m.long) L.push(['fail', 'কয়েক দিনেই ব্যাটারি শেষ! এই মিশন চলবে অনেক দিন; নিজে নিজে শক্তি বানাতে পারে এমন কিছু লাগবে।']);
-      else if (st.run >= m.min) L.push(['ok', `ব্যাটারি চলবে প্রায় ${dur(st.run)}; মিশনে লাগবে ${dur(m.min)}।`]);
-      else L.push(['fail', `মাত্র ${dur(st.run)} চলেই ব্যাটারি শেষ! মিশনে লাগবে ${dur(m.min)}। বড় ব্যাটারি দাও, বা কম বিদ্যুৎ খায় এমন জিনিস বাছো।`]);
+      if (pw === 'solar') L.push(['warn', T('এখানে রোদ নেই, তাই সৌর প্যানেল শুধু একটা ব্যাটারির মতো কাজ করল।', 'There\'s no sunshine here, so the solar panel only worked like a battery.')]);
+      if (m.long) L.push(['fail', T('কয়েক দিনেই ব্যাটারি শেষ! এই মিশন চলবে অনেক দিন; নিজে নিজে শক্তি বানাতে পারে এমন কিছু লাগবে।', 'The battery died within days! This mission lasts a long time; it needs something that makes its own energy.')]);
+      else if (st.run >= m.min) L.push(['ok', T(`ব্যাটারি চলবে প্রায় ${dur(st.run)}; মিশনে লাগবে ${dur(m.min)}।`, `The battery will last about ${dur(st.run)}; the mission needs ${dur(m.min)}.`)]);
+      else L.push(['fail', T(`মাত্র ${dur(st.run)} চলেই ব্যাটারি শেষ! মিশনে লাগবে ${dur(m.min)}। বড় ব্যাটারি দাও, বা কম বিদ্যুৎ খায় এমন জিনিস বাছো।`, `The battery died after only ${dur(st.run)}! The mission needs ${dur(m.min)}. Use a bigger battery, or choose parts that use less power.`)]);
     }
   }
   Object.entries(bad).forEach(([k, v]) => { if (has(k)) L.push(sp(v)); });
   (m.opt || []).forEach(([t, msg]) => { if (has(t)) L.push(['bonus', msg]); });
-  L.push(st.cost > m.budget ? ['fail', `খরচ ${bn(st.cost)} কয়েন, কিন্তু বাজেট মাত্র ${bn(m.budget)}। কিছু দামি জিনিস বাদ দাও।`] : ['ok', `খরচ ${bn(st.cost)} কয়েন, বাজেটের মধ্যেই!`]);
+  L.push(st.cost > m.budget ? ['fail', T(`খরচ ${bn(st.cost)} কয়েন, কিন্তু বাজেট মাত্র ${bn(m.budget)}। কিছু দামি জিনিস বাদ দাও।`, `It costs ${st.cost} coins, but the budget is only ${m.budget}. Remove some expensive parts.`)] : ['ok', T(`খরচ ${bn(st.cost)} কয়েন, বাজেটের মধ্যেই!`, `It costs ${st.cost} coins, within budget!`)]);
   return L;
 }
 
@@ -106,37 +119,37 @@ const SC = {
 function stars(n) { return '★'.repeat(n) + '☆'.repeat(3 - n); }
 function title() {
   const total = Object.values(best).reduce((s, v) => s + v, 0), max = M.length * 3;
-  const rank = total >= max - 2 ? 'রোবট কিংবদন্তি' : total >= 15 ? 'মাস্টার বিল্ডার' : total >= 6 ? 'তরুণ প্রকৌশলী' : 'শিক্ষানবিশ';
-  $('bRank').innerHTML = `মোট তারা <b>${bn(total)}/${bn(max)}</b> · তোমার পদবি: <b>${rank}</b>`;
+  const rank = total >= max - 2 ? T('রোবট কিংবদন্তি', 'Robot legend') : total >= 15 ? T('মাস্টার বিল্ডার', 'Master builder') : total >= 6 ? T('তরুণ প্রকৌশলী', 'Young engineer') : T('শিক্ষানবিশ', 'Apprentice');
+  $('bRank').innerHTML = T(`মোট তারা <b>${bn(total)}/${bn(max)}</b> · তোমার পদবি: <b>${rank}</b>`, `Total stars <b>${total}/${max}</b> · Your title: <b>${rank}</b>`);
 }
 function renderMissions() {
-  $('missions').innerHTML = M.map((m, i) => `<button class="mcard" data-i="${i}" aria-pressed="${i === mi}"><b>${m.t}</b><span class="st">${best[m.id] ? stars(best[m.id]) : 'নতুন'}</span></button>`).join('');
+  $('missions').innerHTML = M.map((m, i) => `<button class="mcard" data-i="${i}" aria-pressed="${i === mi}"><b>${m.t}</b><span class="st">${best[m.id] ? stars(best[m.id]) : T('নতুন', 'New')}</span></button>`).join('');
   const m = M[mi];
   $('mT').textContent = m.t; $('mS').textContent = m.s;
-  $('mNeed').innerHTML = `<span>বাজেট: <b>${bn(m.budget)} কয়েন</b></span><span>চলতে হবে: <b>${m.long ? 'অনেক দিন' : dur(m.min)}</b></span>`;
+  $('mNeed').innerHTML = T(`<span>বাজেট: <b>${bn(m.budget)} কয়েন</b></span><span>চলতে হবে: <b>${m.long ? 'অনেক দিন' : dur(m.min)}</b></span>`, `<span>Budget: <b>${m.budget} coins</b></span><span>Must run for: <b>${m.long ? 'many days' : dur(m.min)}</b></span>`);
   $('scene').querySelector('#bg').innerHTML = SC[m.scene]();
-  $('hintBox').hidden = true; $('hintBox').textContent = 'সাহায্য: ' + m.hint;
+  $('hintBox').hidden = true; $('hintBox').textContent = T('সাহায্য: ', 'Hint: ') + m.hint;
   title();
 }
 function renderShop() {
-  $('shop').innerHTML = GROUPS.map(([g, h, max]) => `<div class="pg"><h3>${h}${max > 1 ? ` <small>(${bn(b.sense.length)}/${bn(max)} জায়গা ভরা)</small>` : ''}</h3><div class="pgrid">${Object.entries(P[g]).map(([k, p]) => {
+  $('shop').innerHTML = GROUPS.map(([g, h, max]) => `<div class="pg"><h3>${h}${max > 1 ? ` <small>${T(`(${bn(b.sense.length)}/${bn(max)} জায়গা ভরা)`, `(${b.sense.length}/${max} slots used)`)}</small>` : ''}</h3><div class="pgrid">${Object.entries(P[g]).map(([k, p]) => {
     const on = g === 'sense' ? b.sense.includes(k) : b[g] === k;
-    const meta = RB.lv > 1 ? `<i>${f1(p[2])} কেজি${p[3] ? ' · ' + bn(p[3]) + ' ওয়াট' : ''}</i>` : '';
-    return `<button class="part" data-g="${g}" data-k="${k}" aria-pressed="${on}"><span class="pn">${p[0]}</span><span class="pc">${bn(p[1])} কয়েন</span><small>${p[4]}</small>${meta}</button>`;
+    const meta = RB.lv > 1 ? `<i>${f1(p[2])} ${T('কেজি', 'kg')}${p[3] ? ' · ' + bn(p[3]) + T(' ওয়াট', ' W') : ''}</i>` : '';
+    return `<button class="part" data-g="${g}" data-k="${k}" aria-pressed="${on}"><span class="pn">${p[0]}</span><span class="pc">${bn(p[1])} ${T('কয়েন', 'coins')}</span><small>${p[4]}</small>${meta}</button>`;
   }).join('')}</div></div>`).join('');
 }
 function bar(label, val, frac, warn) { return `<div class="sr"><span>${label}</span><div class="sb"><i style="width:${Math.min(100, Math.max(3, frac * 100))}%;background:${warn ? '#ff5a3c' : '#2fa84f'}"></i></div><b>${val}</b></div>`; }
 function renderStats() {
   const st = stats(), m = M[mi];
   const endless = b.power === 'plug' || b.power === 'rtg' || (b.power === 'solar' && m.sun);
-  const runTxt = endless ? 'অফুরন্ত' : dur(st.run);
+  const runTxt = endless ? T('অফুরন্ত', 'Endless') : dur(st.run);
   const runOk = endless || (!m.long && st.run >= m.min);
-  let h = bar('খরচ', `${bn(st.cost)}/${bn(m.budget)}`, st.cost / m.budget, st.cost > m.budget)
-    + bar('ওজন', `${f1(st.kg)} কেজি`, st.kg / 20, b.move === 'prop' && st.kg > 6)
-    + bar('চলবে', runTxt, endless ? 1 : Math.min(1, st.run / (m.long ? 99999 : m.min)), !runOk)
-    + bar('গতি', ['স্থির', 'ধীর', 'ধীর', 'মাঝারি', 'দ্রুত', 'খুব দ্রুত'][P.move[b.move][5]], P.move[b.move][5] / 5, false);
-  if (RB.lv === 3 && !endless) h += `<p class="calc">হিসাব: ব্যাটারি ${bn(st.cap)} ওয়াট-ঘণ্টা ÷ মোট বিদ্যুৎ খরচ ${bn(st.w)} ওয়াট = ${f1(st.cap / st.w)} ঘণ্টা</p>`;
-  else if (RB.lv === 2) h += `<p class="calc">মোট বিদ্যুৎ খরচ: ${bn(st.w)} ওয়াট। যত বেশি ওয়াট, ব্যাটারি তত তাড়াতাড়ি ফুরায়।</p>`;
+  let h = bar(T('খরচ', 'Cost'), `${bn(st.cost)}/${bn(m.budget)}`, st.cost / m.budget, st.cost > m.budget)
+    + bar(T('ওজন', 'Weight'), `${f1(st.kg)} ${T('কেজি', 'kg')}`, st.kg / 20, b.move === 'prop' && st.kg > 6)
+    + bar(T('চলবে', 'Runs'), runTxt, endless ? 1 : Math.min(1, st.run / (m.long ? 99999 : m.min)), !runOk)
+    + bar(T('গতি', 'Speed'), (RB.en ? ['still', 'slow', 'slow', 'medium', 'fast', 'very fast'] : ['স্থির', 'ধীর', 'ধীর', 'মাঝারি', 'দ্রুত', 'খুব দ্রুত'])[P.move[b.move][5]], P.move[b.move][5] / 5, false);
+  if (RB.lv === 3 && !endless) h += `<p class="calc">${T(`হিসাব: ব্যাটারি ${bn(st.cap)} ওয়াট-ঘণ্টা ÷ মোট বিদ্যুৎ খরচ ${bn(st.w)} ওয়াট = ${f1(st.cap / st.w)} ঘণ্টা`, `Working: battery ${st.cap} watt-hours ÷ total power use ${st.w} watts = ${f1(st.cap / st.w)} hours`)}</p>`;
+  else if (RB.lv === 2) h += `<p class="calc">${T(`মোট বিদ্যুৎ খরচ: ${bn(st.w)} ওয়াট। যত বেশি ওয়াট, ব্যাটারি তত তাড়াতাড়ি ফুরায়।`, `Total power use: ${st.w} watts. The more watts, the faster the battery runs out.`)}</p>`;
   $('stats').innerHTML = h;
 }
 const bot = $('bot');
@@ -155,7 +168,7 @@ function run() {
   const m = M[mi], L = evaluate(m);
   const fails = L.filter(x => x[0] === 'fail').length, warns = L.filter(x => x[0] === 'warn').length;
   const got = fails ? 0 : 3 - Math.min(2, warns);
-  const name = RB.esc(($('botName').value || 'রোবু').trim());
+  const name = RB.esc(($('botName').value || T('রোবু', 'Robu')).trim());
   $('result').innerHTML = `<ul class="log" id="log"></ul><div id="verdict"></div>`;
   place(); void bot.offsetWidth;
   bot.style.transition = reduce ? 'none' : 'left 2.6s ease-in-out';
@@ -170,8 +183,8 @@ function run() {
     const real = (m.real || []).map(e => RB.ROB.find(r => r.e === e)).filter(Boolean);
     const nextI = (mi + 1) % M.length;
     $('verdict').innerHTML = fails
-      ? `<div class="verdict lose"><b>${name} মিশনে আটকে গেল!</b><p>লাল ✗ চিহ্নগুলো ঠিক করে আবার চেষ্টা করো। ${bn(fails)}টা সমস্যা বাকি।</p></div>`
-      : `<div class="verdict win"><span class="big">${stars(got)}</span><b>${name} মিশন জিতেছে!</b><p>${got < 3 ? 'হলুদ ! চিহ্নগুলো ঠিক করলে ৩ তারা পাবে।' : 'নিখুঁত রোবট! তুমি সত্যিকারের প্রকৌশলীর মতো ভেবেছ।'}</p>${real.length ? `<p class="real">এমন আসল রোবট দেখো: ${real.map(r => `<button class="chip" data-id="${r.id}">${r.n}</button>`).join(' ')}</p>` : ''}${got ? `<button class="btn" id="nextM" data-i="${nextI}">পরের মিশন: ${M[nextI].t} →</button>` : ''}</div>`;
+      ? `<div class="verdict lose"><b>${T(`${name} মিশনে আটকে গেল!`, `${name} got stuck on the mission!`)}</b><p>${T(`লাল ✗ চিহ্নগুলো ঠিক করে আবার চেষ্টা করো। ${bn(fails)}টা সমস্যা বাকি।`, `Fix the red ✗ marks and try again. ${fails} problem${fails > 1 ? 's' : ''} left.`)}</p></div>`
+      : `<div class="verdict win"><span class="big">${stars(got)}</span><b>${T(`${name} মিশন জিতেছে!`, `${name} won the mission!`)}</b><p>${got < 3 ? T('হলুদ ! চিহ্নগুলো ঠিক করলে ৩ তারা পাবে।', 'Fix the yellow ! marks to get 3 stars.') : T('নিখুঁত রোবট! তুমি সত্যিকারের প্রকৌশলীর মতো ভেবেছ।', 'A perfect robot! You thought like a real engineer.')}</p>${real.length ? `<p class="real">${T('এমন আসল রোবট দেখো:', 'See real robots like this:')} ${real.map(r => `<button class="chip" data-id="${r.id}">${r.n}</button>`).join(' ')}</p>` : ''}${got ? `<button class="btn" id="nextM" data-i="${nextI}">${T('পরের মিশন', 'Next mission')}: ${M[nextI].t} →</button>` : ''}</div>`;
     renderMissions();
   }, step * (L.length + 1) + (reduce ? 0 : 400)));
 }
@@ -183,7 +196,7 @@ $('shop').addEventListener('click', e => {
   if (g === 'sense') {
     if (b.sense.includes(k)) b.sense = b.sense.filter(x => x !== k);
     else if (b.sense.length < 3) b.sense.push(k);
-    else { $('shopMsg').textContent = 'সেন্সর বসানোর জায়গা মাত্র ৩টি! আগে একটা খুলে নাও।'; setTimeout(() => { $('shopMsg').textContent = ''; }, 2600); return; }
+    else { $('shopMsg').textContent = T('সেন্সর বসানোর জায়গা মাত্র ৩টি! আগে একটা খুলে নাও।', 'There are only 3 sensor slots! Remove one first.'); setTimeout(() => { $('shopMsg').textContent = ''; }, 2600); return; }
   } else b[g] = k;
   store.set('bot', b); renderShop(); renderStats(); renderBot(); place(); $('result').innerHTML = '';
 });
@@ -195,7 +208,7 @@ $('result').addEventListener('click', e => {
   const c = e.target.closest('[data-id]'); if (c) return RB.openRobot(+c.dataset.id, RB.ROB);
   if (e.target.id === 'nextM') { mi = +e.target.dataset.i; all(); $('banao').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' }); }
 });
-try { $('botName').value = store.get('botName', 'রোবু'); } catch (e) {}
+try { $('botName').value = store.get('botName', T('রোবু', 'Robu')); } catch (e) {}
 $('botName').addEventListener('input', e => store.set('botName', e.target.value));
 RB.onLv.push(() => { renderShop(); renderStats(); });
 all();

@@ -37,6 +37,7 @@ MZ.L = [
     sol: [{ t: 'while', body: [{ t: 'if', c: 'ropen', then: [{ t: 'right' }, { t: 'fwd' }], else: [{ t: 'if', c: 'wall', then: [{ t: 'left' }], else: [{ t: 'fwd' }] }] }] }] }
 ];
 MZ.COND = { wall: 'সামনে দেয়াল', ropen: 'ডানে খোলা পথ', lopen: 'বামে খোলা পথ' };
+if (window.LANG === 'en' && window.ENC) { MZ.COND = ENC.cond; MZ.L.forEach((l, i) => { l.t = ENC.maze[i][0]; l.learn = ENC.maze[i][1]; }); }
 const DR = [[-1, 0], [0, 1], [1, 0], [0, -1]];
 MZ.parse = lv => {
   const g = lv.map.map(r => r.split('')); let s = null, goal = null; const bat = [];

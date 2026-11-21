@@ -29,17 +29,17 @@ btn.addEventListener('click', async () => {
   }
 });
 $('iosClose').addEventListener('click', () => $('iosHelp').close());
-window.addEventListener('appinstalled', () => { btn.hidden = true; show('অ্যাপ ইনস্টল হয়েছে! এখন হোম স্ক্রিন থেকে খোলো।'); });
+window.addEventListener('appinstalled', () => { btn.hidden = true; show(L('অ্যাপ ইনস্টল হয়েছে! এখন হোম স্ক্রিন থেকে খোলো।', 'App installed! Open it from your home screen.')); });
 
 /* offline support and updates */
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
   try {
     navigator.serviceWorker.register('sw.js').then(reg => {
-      const ask = w => show('নতুন আপডেট এসেছে!', () => { w.postMessage('update'); }, 'এখনই দেখো');
+      const ask = w => show(L('নতুন আপডেট এসেছে!', 'A new update is ready!'), () => { w.postMessage('update'); }, L('এখনই দেখো', 'Update now'));
       if (reg.waiting && navigator.serviceWorker.controller) ask(reg.waiting);
       const track = w => {
         if (!w) return;
-        const done = () => { if (navigator.serviceWorker.controller) ask(w); else show('এখন ইন্টারনেট ছাড়াও রোবট পাঠশালা চলবে!'); };
+        const done = () => { if (navigator.serviceWorker.controller) ask(w); else show(L('এখন ইন্টারনেট ছাড়াও রোবট পাঠশালা চলবে!', 'Robot Pathshala now works without internet!')); };
         if (w.state === 'installed') return done();
         w.addEventListener('statechange', () => { if (w.state === 'installed') done(); });
       };
@@ -50,5 +50,5 @@ if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.
     navigator.serviceWorker.addEventListener('controllerchange', () => { if (!reloaded) { reloaded = true; location.reload(); } });
   } catch (e) {}
 }
-window.addEventListener('offline', () => show('ইন্টারনেট নেই, তবু চিন্তা নেই: সব পাঠ আর খেলা চলবে।'));
+window.addEventListener('offline', () => show(L('ইন্টারনেট নেই, তবু চিন্তা নেই: সব পাঠ আর খেলা চলবে।', 'No internet? No problem: all lessons and games still work.')));
 }

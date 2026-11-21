@@ -41,19 +41,20 @@ const CH = [
   { t: 'রোবুর বড় স্বপ্ন', mood: 'happy', say: ['তুমি তো এখন সত্যিকারের রোবট প্রকৌশলী!', 'শেষ ধাপ: সব ৮টা মিশন জেতো, আর কুইজে অন্তত ৫টা ঠিক উত্তর দাও।', 'তারপর তোমার নাম লেখা সনদ তোমার!'],
     task: 'সব মিশন আর কুইজে ৫ পাও', go: '#sanad', prog: s => [Math.min(s.missionsDone, 8) + (s.quiz >= 5 ? 1 : 0), 9] }
 ];
+if (RB.en && window.ENC) CH.forEach((c, i) => { const e = ENC.story[i]; c.t = e[0]; c.say = e[1]; c.task = e[2]; });
 const done = (c, s) => { const [a, b] = c.prog(s); return a >= b; };
 let sel = null;
 function render() {
   const s = RB.stat();
   let cur = CH.findIndex(c => !done(c, s)); const all = cur < 0; if (all) cur = CH.length - 1;
   if (sel === null || sel > cur) sel = cur;
-  $('stPath').innerHTML = CH.map((c, i) => `<button class="stn ${done(c, s) ? 'ok' : ''} ${i === cur && !all ? 'cur' : ''}" data-i="${i}" aria-pressed="${i === sel}" ${i > cur ? 'disabled' : ''} aria-label="অধ্যায় ${bn(i + 1)}: ${c.t}"><b>${done(c, s) ? '✓' : bn(i + 1)}</b></button>`).join('<span class="stl"></span>');
+  $('stPath').innerHTML = CH.map((c, i) => `<button class="stn ${done(c, s) ? 'ok' : ''} ${i === cur && !all ? 'cur' : ''}" data-i="${i}" aria-pressed="${i === sel}" ${i > cur ? 'disabled' : ''} aria-label="${RB.L('অধ্যায়', 'Chapter')} ${bn(i + 1)}: ${c.t}"><b>${done(c, s) ? '✓' : bn(i + 1)}</b></button>`).join('<span class="stl"></span>');
   const c = CH[sel], [a, b] = c.prog(s), ok = a >= b;
   $('stPic').innerHTML = RB.robu(c.mood);
-  $('stT').textContent = `অধ্যায় ${bn(sel + 1)}: ${c.t}`;
-  $('stText').innerHTML = (all && sel === CH.length - 1 ? ['অভিনন্দন! আমরা একসাথে পুরো অভিযান শেষ করলাম।', 'বড় হয়ে তুমি হয়তো বাংলাদেশের জন্য এমন রোবট বানাবে, যা বন্যায় মানুষ বাঁচাবে বা কৃষকদের সাহায্য করবে।', 'নিচে তোমার সনদ অপেক্ষা করছে!'] : c.say).map(t => `<p>${t}</p>`).join('');
-  $('stTask').innerHTML = `<span class="tk ${ok ? 'ok' : ''}">${ok ? '✓ কাজ শেষ' : 'কাজ'}: ${c.task}</span><span class="tp"><i style="width:${Math.round(a / b * 100)}%"></i></span><b>${bn(a)}/${bn(b)}</b>`;
-  $('stGo').textContent = ok ? (sel < CH.length - 1 ? 'পরের অধ্যায় →' : 'সনদ দেখো →') : 'চলো যাই →';
+  $('stT').textContent = `${RB.L('অধ্যায়', 'Chapter')} ${bn(sel + 1)}: ${c.t}`;
+  $('stText').innerHTML = (all && sel === CH.length - 1 ? (RB.en && window.ENC ? ENC.storyEnd : ['অভিনন্দন! আমরা একসাথে পুরো অভিযান শেষ করলাম।', 'বড় হয়ে তুমি হয়তো বাংলাদেশের জন্য এমন রোবট বানাবে, যা বন্যায় মানুষ বাঁচাবে বা কৃষকদের সাহায্য করবে।', 'নিচে তোমার সনদ অপেক্ষা করছে!']) : c.say).map(t => `<p>${t}</p>`).join('');
+  $('stTask').innerHTML = `<span class="tk ${ok ? 'ok' : ''}">${ok ? RB.L('✓ কাজ শেষ', '✓ Done') : RB.L('কাজ', 'Task')}: ${c.task}</span><span class="tp"><i style="width:${Math.round(a / b * 100)}%"></i></span><b>${bn(a)}/${bn(b)}</b>`;
+  $('stGo').textContent = ok ? (sel < CH.length - 1 ? RB.L('পরের অধ্যায় →', 'Next chapter →') : RB.L('সনদ দেখো →', 'See certificate →')) : RB.L('চলো যাই →', 'Let\'s go →');
   $('stGo').dataset.go = ok && sel < CH.length - 1 ? 'next' : (ok ? '#sanad' : c.go);
   $('stGo').dataset.mission = c.mission || '';
 }
