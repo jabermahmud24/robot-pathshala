@@ -1,11 +1,11 @@
 // রোবট পাঠশালা অফলাইন সার্ভিস ওয়ার্কার।
 // সাইটের কোনো ফাইল বদলালে VERSION বাড়াও, তাহলে সবার কাছে নতুন সংস্করণ পৌঁছাবে।
-const VERSION = 'v2';
+const VERSION = 'v3';
 const CACHE = 'robot-pathshala-' + VERSION;
 const FONTS = 'robot-pathshala-fonts';
 const FILES = [
   './', 'index.html', 'manifest.webmanifest',
-  'app.js', 'app2.js', 'comps.js', 'build.js', 'missions.js',
+  'app.js', 'app2.js', 'comps.js', 'build.js', 'missions.js', 'mazecore.js', 'maze.js', 'story.js', 'daily.js', 'cert.js', 'voice.js', 'pwa.js',
   'r1.js', 'r2.js', 'r3.js', 'r4.js', 'x1.js', 'x2.js', 'x3.js', 'x4.js',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/maskable-512.png', 'icons/apple-touch-icon.png', 'icons/favicon-64.png'
 ];

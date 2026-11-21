@@ -76,8 +76,8 @@ function frame(now) {
   requestAnimationFrame(frame);
 }
 const upd = () => { $('wallV').textContent = bn(wallR.value) + ' সেমি'; $('thrV').textContent = bn(thrR.value) + ' সেমি'; };
-[wallR, thrR].forEach(r => r.addEventListener('input', () => { upd(); if (reduce) reset(); else if (phase !== 'go') reset(); }));
-$('simGo').addEventListener('click', reset);
+[wallR, thrR].forEach(r => r.addEventListener('input', () => { upd(); RB.mark('sim'); if (reduce) reset(); else if (phase !== 'go') reset(); }));
+$('simGo').addEventListener('click', () => { reset(); RB.mark('sim'); });
 const roSim = new ResizeObserver(drawSim); roSim.observe(sim);
 upd();
 RB.onLv.push(() => { $('loopNote').textContent = NOTES[RB.lv - 1]; lastKey = ''; drawSim(); });
@@ -145,7 +145,7 @@ function fillRobot() {
   if (RB.lv > 1) f.push(['ভেতরের প্রযুক্তি', r.t]);
   if (RB.lv === 1) f.push(['আরও জানতে চাও?', 'ওপরে স্তর বদলে “তরুণ প্রকৌশলী” বেছে নিলে এই রোবটের ভেতরের প্রযুক্তিও দেখতে পাবে।']);
   $('mFacts').innerHTML = f.map(([h, t]) => `<div class="fact"><span>${h}</span>${t}</div>`).join('');
-  if (!seen.has(r.id)) { seen.add(r.id); RB.store.set('seen', [...seen]); const c = grid.querySelector(`[data-id="${r.id}"]`); if (c) c.classList.add('seen'); seenText(); }
+  if (!seen.has(r.id)) { seen.add(r.id); RB.store.set('seen', [...seen]); RB.ping(); const c = grid.querySelector(`[data-id="${r.id}"]`); if (c) c.classList.add('seen'); seenText(); }
 }
 function openRobot(id, from) { mList = from && from.length ? from : ROB; mId = id; fillRobot(); if (!dlg.open) { try { dlg.showModal(); } catch (e) { dlg.setAttribute('open', ''); } } }
 RB.openRobot = openRobot;
@@ -199,6 +199,7 @@ $('qAns').addEventListener('click', e => {
     $('qAns').hidden = true; $('qEnd').hidden = false;
     $('qText').textContent = 'কুইজ শেষ!';
     $('qNum').textContent = `তোমার স্কোর ${bn(score)} / ${bn(QN)}`;
+    if (score > (RB.prog.quizBest || 0)) RB.mark('quizBest', score);
     $('qStars').textContent = '★'.repeat(score) + '☆'.repeat(QN - score);
     $('qMsg').textContent = score >= 5 ? 'দারুণ! তুমি সত্যিকারের রোবট বিশেষজ্ঞ।' : score >= 3 ? 'ভালো হয়েছে! ১০০ রোবটের তালিকা ঘুরে আবার চেষ্টা করো।' : 'চিন্তা নেই! রোবটের কার্ডগুলো পড়ে আবার খেলো, এবার আরও ভালো হবে।';
   }, 2600);

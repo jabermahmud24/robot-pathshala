@@ -166,7 +166,7 @@ function run() {
   timers.push(setTimeout(() => {
     $('runBtn').disabled = false; $('runBtn2').disabled = false;
     bot.classList.add(fails ? 'oops' : 'win');
-    if (got > (best[m.id] || 0)) { best[m.id] = got; store.set('stars', best); }
+    if (got > (best[m.id] || 0)) { best[m.id] = got; store.set('stars', best); RB.ping(); }
     const real = (m.real || []).map(e => RB.ROB.find(r => r.e === e)).filter(Boolean);
     const nextI = (mi + 1) % M.length;
     $('verdict').innerHTML = fails

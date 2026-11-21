@@ -10,6 +10,7 @@ function show(msg, action, label) {
   a.hidden = !action; a.textContent = label || ''; a.onclick = action || null;
   toast.hidden = false;
 }
+window.RB && (window.RB.toast = show);
 toast.querySelector('button.x').addEventListener('click', () => { toast.hidden = true; });
 
 /* install button */

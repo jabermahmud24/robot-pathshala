@@ -8,6 +8,9 @@ RB.store = {
   get(k, f) { try { const v = localStorage.getItem(k); return v === null ? f : JSON.parse(v); } catch (e) { return f; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
 };
+RB.prog = RB.store.get('prog', {});
+RB.ping = () => document.dispatchEvent(new CustomEvent('rb:progress'));
+RB.mark = (k, v = true) => { if (RB.prog[k] === v) return; RB.prog[k] = v; RB.store.set('prog', RB.prog); RB.ping(); };
 RB.CATS = {
   home: ['ঘরের রোবট', '#ff8a3d'], humanoid: ['হিউম্যানয়েড', '#7a5cff'], factory: ['কারখানা ও গুদাম', '#e09b00'],
   medical: ['চিকিৎসা', '#ff4f86'], space: ['মহাকাশ', '#3d5afe'], farm: ['কৃষি', '#2fa84f'],
@@ -101,6 +104,7 @@ chips.innerHTML = Object.entries(PARTS).map(([k, v]) => `<button class="chip" da
 let cur = 'sensor';
 function showPart(k) {
   cur = k; const p = PARTS[k];
+  if (RB.started) RB.mark('part_' + k);
   stage.querySelectorAll('.part').forEach(g => g.classList.toggle('on', g.dataset.p === k));
   chips.querySelectorAll('.chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.p === k)));
   document.getElementById('pTag').textContent = 'কাজ: ' + p[1];
@@ -112,4 +116,5 @@ stage.querySelectorAll('.part').forEach(g => g.addEventListener('click', () => s
 chips.addEventListener('click', e => { const b = e.target.closest('.chip'); if (b) showPart(b.dataset.p); });
 RB.onLv.push(() => showPart(cur));
 showPart(cur);
+RB.started = true;
 }

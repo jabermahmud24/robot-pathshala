@@ -181,6 +181,68 @@ footer a{color:inherit}
 .verdict .real .chip{margin:4px 4px 0 0}
 @media(max-width:860px){.lab{grid-template-columns:minmax(0,1fr);grid-template-areas:"brief" "scene" "stats" "act" "res" "shop";grid-template-rows:none}.scene{aspect-ratio:16/10}.bot{width:44%}}
 @media(max-width:600px){.pgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.links{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;max-width:100%}.links::-webkit-scrollbar{display:none}.links a{white-space:nowrap}
+.cardtop{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.say{flex:none;display:inline-flex;align-items:center;gap:6px;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 12px 6px 10px;min-height:40px;font-weight:700;font-size:14px}
+.say svg{width:20px;height:20px}.say.on{background:var(--coral);border-color:var(--coral);color:#fff}
+.stpath{display:flex;align-items:center;overflow-x:auto;padding:6px 2px 14px;margin-top:12px}
+.stn{flex:none;width:46px;height:46px;border-radius:50%;border:3px solid var(--line);background:var(--card);font:800 18px "Baloo Da 2",sans-serif;color:var(--ink)}
+.stn.ok{background:#1fa463;border-color:#1fa463;color:#fff}.stn.cur{border-color:var(--coral);box-shadow:0 0 0 5px color-mix(in srgb,var(--coral) 25%,transparent)}
+.stn[aria-pressed=true]{outline:3px solid var(--ink);outline-offset:2px}.stn:disabled{opacity:.45}
+.stl{flex:1 0 18px;height:4px;background:var(--line);border-radius:2px}
+.story{display:grid;grid-template-columns:minmax(0,220px) minmax(0,1fr);gap:24px;align-items:center}
+.stpic{width:100%;max-height:300px}
+.bubble{position:relative;background:var(--sun);color:var(--sunInk);border-radius:28px;padding:20px 22px}
+.bubble::before{content:"";position:absolute;left:-14px;top:50%;border:14px solid transparent;border-right-color:var(--sun);border-left:0;transform:translateY(-50%)}
+.bubble h3{font-size:24px}.bubble #stText p{font-size:18px;margin:.35em 0}
+.sttask{display:grid;grid-template-columns:minmax(0,auto) minmax(60px,1fr) auto;gap:10px;align-items:center;background:color-mix(in srgb,#fff 55%,var(--sun));border-radius:14px;padding:10px 12px;margin:12px 0;font-weight:600;font-size:15px;color:#1d1b3a}
+.tk.ok{color:#137a45}.tp{height:10px;border-radius:5px;background:#fff;overflow:hidden;border:1px solid #e3cf7a}.tp i{display:block;height:100%;background:#1fa463}
+.streak{display:flex;align-items:center;gap:8px;background:var(--card);border-radius:18px;padding:8px 16px}.streak .flame{width:34px;height:34px}.streak b{font:800 32px "Baloo Da 2",sans-serif}.streak span{font-weight:600;color:var(--soft)}
+.daily{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:22px;align-items:center;background:var(--card);border-radius:28px;padding:20px;margin-top:14px}
+.dpic{width:100%;border-radius:16px}.dq{font-size:19px;font-weight:600;margin:6px 0}
+.week{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}.wd{display:grid;justify-items:center;gap:2px;font-size:13px;color:var(--soft);min-width:34px}
+.wd i{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);background:var(--bg)}.wd.ok i{background:#1fa463;border-color:#1fa463}.wd.try i{background:#ffcd1f;border-color:#e0a800}.wd.now{font-weight:800;color:var(--ink)}
+.dafter{background:var(--tint);border-radius:14px;padding:10px 14px;margin-top:12px}.soft{color:var(--soft)}
+.linkish{border:0;background:none;padding:0;font:inherit;font-weight:700;color:var(--ink);text-decoration:underline;cursor:pointer}
+.lvls{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 12px;margin-top:12px}
+.lvb{flex:none;min-width:64px;border:2px solid var(--line);background:var(--card);border-radius:14px;padding:6px 10px;display:grid;justify-items:center}
+.lvb b{font:800 20px "Baloo Da 2",sans-serif}.lvb span{font-size:12px;color:var(--coral);letter-spacing:1px}.lvb[aria-pressed=true]{background:var(--sun);color:var(--sunInk);border-color:var(--ink)}.lvb:disabled{opacity:.45}
+.mz{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start}
+.mzlearn{color:var(--soft);font-size:16px}
+.mzboard{background:var(--tint);border-radius:20px;padding:10px;margin-top:8px}.mzboard svg{display:block;width:100%;max-height:420px}
+#mzBot.bump{animation:oops .5s}
+.mzmsg{margin-top:10px;border-radius:14px;padding:0;font-weight:600}.mzmsg:not(:empty){padding:10px 14px;background:var(--tint)}
+.mzmsg.win{background:var(--sun);color:var(--sunInk)}.mzmsg.lose{background:color-mix(in srgb,#e8432f 15%,var(--card))}.mzmsg .st{color:#e8432f;font-size:22px;letter-spacing:2px;margin-right:6px}.mzmsg .btn{margin-top:8px;display:inline-block}
+.mzR h3{font-size:19px;margin:6px 0 8px}.mzR h3 small{font:500 14px "Hind Siliguri",sans-serif;color:var(--soft)}
+.pal{display:flex;flex-wrap:wrap;gap:8px}
+.blk{border-radius:12px;color:#fff;font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px;padding:6px 8px 6px 12px;min-height:44px;border:0}
+.blk.add{cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.18)}.blk.add:active{transform:translateY(2px);box-shadow:none}
+.blk.fwd{background:#1e88c7}.blk.turn{background:#7a5cff}.blk.rep{background:#c77d00}.blk.whl{background:#d9432f}.blk.iff{background:#1f8f4e}
+.prog{background:var(--tint);border-radius:16px;padding:10px;min-height:120px}
+.prog .blk{margin-bottom:6px}.prog .blk>span{flex:1}
+.blk.box{display:block;padding:6px 6px 6px 10px}.bh{display:flex;align-items:center;gap:8px;min-height:36px}.bh span{flex:1}
+.slot{background:var(--card);border-radius:10px;padding:6px;margin-top:6px;color:var(--ink)}
+.blk.box>.blab{font-size:13px;margin-top:6px;opacity:.9}
+.pill{border:0;border-radius:999px;background:#fff;color:#1d1b3a;font-weight:800;font-size:14px;padding:4px 10px;min-height:32px}
+.x{border:0;border-radius:50%;width:30px;height:30px;background:rgba(0,0,0,.22);color:#fff;font-size:18px;line-height:1;flex:none}
+.drop{display:block;width:100%;border:2px dashed var(--line);background:transparent;border-radius:10px;padding:6px;color:var(--soft);font-size:14px;min-height:38px}
+.drop.on{border-color:#e0a800;background:color-mix(in srgb,#ffcd1f 22%,transparent);color:var(--ink);font-weight:700}
+.blk.now{outline:4px solid #ffcd1f;outline-offset:1px}
+.empty2{color:var(--soft);margin:4px 2px 8px}
+.mzbtns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.mz.running .pal,.mz.running .prog button{pointer-events:none;opacity:.6}
+.cert{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:24px;align-items:start;margin-top:14px}
+.cr{display:grid;grid-template-columns:minmax(0,1fr) minmax(60px,.8fr) auto;gap:10px;align-items:center;font-size:15px;margin-bottom:8px}.cr em{font-style:normal;color:var(--coral);font-size:13px}.cr.ok span:first-child{color:#137a45;font-weight:700}
+#cName{font:16px "Hind Siliguri",sans-serif;padding:10px 12px;border:2px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);width:100%;min-height:46px;margin-top:6px}
+.nm{font-weight:600;font-size:15px;display:block;margin-top:12px}
+.cwrap{position:relative;border-radius:16px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,.12)}
+.cwrap canvas{display:block;width:100%;height:auto}
+.lock{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:8px;text-align:center;background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(3px);padding:16px}
+.lock[hidden]{display:none}.lock b{font:800 26px "Baloo Da 2",sans-serif}
+#printArea{display:none}
+@media print{body>*{display:none!important}#printArea{display:block!important}#printArea img{width:100%}@page{size:A4 landscape;margin:8mm}}
+@media(max-width:860px){.mz,.cert{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.story,.daily{grid-template-columns:minmax(0,1fr)}.stpic{max-height:170px}.bubble::before{left:50%;top:-14px;border:14px solid transparent;border-bottom-color:var(--sun);border-top:0;transform:translateX(-50%)}.dpic{max-width:280px;justify-self:center}}
 @media(max-width:860px){.explorer,.loop,.builder{grid-template-columns:minmax(0,1fr)}.result{position:static}}
 @media(max-width:600px){.stage{min-height:360px}.quizbox{grid-template-columns:minmax(0,1fr)}.answers{grid-template-columns:minmax(0,1fr)}.steps3{grid-template-columns:minmax(0,1fr)}.links a{padding:6px 8px;font-size:15px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.rc .pic{height:100px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
@@ -189,7 +251,7 @@ footer a{color:inherit}
 <body>
 <nav><div class="wrap">
   <a class="logo" href="#ghor"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect x="5" y="8" width="20" height="16" rx="5" fill="#ff5a3c"/><circle cx="11" cy="16" r="3" fill="#fff"/><circle cx="19" cy="16" r="3" fill="#fff"/><line x1="15" y1="3" x2="15" y2="8" stroke="#22b5e8" stroke-width="3"/><circle cx="15" cy="3" r="2.5" fill="#22b5e8"/></svg>রোবট পাঠশালা</a>
-  <div class="links"><a href="#ghor">রোবটের ভেতর</a><a href="#chokro">কীভাবে ভাবে</a><a href="#robot">১০০ রোবট</a><a href="#banao">বানাও</a><a href="#quiz">কুইজ</a></div>
+  <div class="links"><a href="#golpo">গল্প</a><a href="#ajker">আজকের প্রশ্ন</a><a href="#ghor">রোবটের ভেতর</a><a href="#robot">১০০ রোবট</a><a href="#kod">কোডিং</a><a href="#banao">মিশন</a><a href="#quiz">কুইজ</a><a href="#sanad">সনদ</a></div>
   <button class="install" id="installBtn" hidden>অ্যাপ হিসেবে নাও</button>
 </div></nav>
 
@@ -205,13 +267,29 @@ footer a{color:inherit}
     <div class="stage" id="stage"></div>
     <div class="infocard" aria-live="polite">
       <div class="chips" id="partChips"></div>
-      <span class="tag" id="pTag"></span>
+      <div class="cardtop"><span class="tag" id="pTag"></span><button data-say="#pTitle,#pText,#pAnalogy"></button></div>
       <h3 id="pTitle"></h3>
       <p id="pText"></p>
       <div class="analogy" id="pAnalogy"></div>
     </div>
   </div>
 </div></header>
+<section class="band" id="golpo"><div class="wrap">
+  <div class="cathead"><div><h2>রোবুর অভিযান</h2><p class="lead">রোবুর সাথে ১০টা অধ্যায়ের অভিযানে চলো। প্রতিটা অধ্যায়ের কাজ শেষ করলে পরেরটা খুলে যাবে।</p></div></div>
+  <div class="stpath" id="stPath"></div>
+  <div class="story">
+    <svg class="stpic" id="stPic" viewBox="40 20 120 185" aria-hidden="true"></svg>
+    <div class="bubble"><div class="cardtop"><h3 id="stT"></h3><button data-say="#stText"></button></div><div id="stText"></div>
+      <div class="sttask" id="stTask"></div><button class="btn go" id="stGo">চলো যাই →</button></div>
+  </div>
+</div></section>
+<section class="band" id="ajker" style="background:var(--tint)"><div class="wrap">
+  <div class="cathead"><div><h2>আজকের প্রশ্ন</h2><p class="lead">প্রতিদিন একটা নতুন প্রশ্ন। প্রতিদিন উত্তর দিলে তোমার ধারা বাড়বে!</p></div><div class="streak" id="dStreak"></div></div>
+  <div class="daily">
+    <svg class="dpic" id="dPic" viewBox="0 0 200 140" aria-hidden="true"></svg>
+    <div><div class="week" id="dWeek"></div><div class="cardtop"><p id="dQ" class="dq"></p><button data-say="#dQ"></button></div><div class="answers" id="dAns"></div><p class="dafter" id="dAfter" hidden></p></div>
+  </div>
+</div></section>
 
 <section class="band" id="chokro"><div class="wrap">
   <h2>সব রোবট তিনটা কাজ বারবার করে</h2>
@@ -231,7 +309,7 @@ footer a{color:inherit}
     <div>
       <h3 style="margin-bottom:8px">রোবটের মাথায় যে নিয়ম চলছে</h3>
       <div class="code" id="codeBox"></div>
-      <p id="loopNote" style="margin-top:12px"></p>
+      <p id="loopNote" style="margin-top:12px"></p><button data-say="#loopNote"></button>
     </div>
   </div>
 </div></section>
@@ -245,11 +323,28 @@ footer a{color:inherit}
   <div class="grid" id="grid"></div>
 </div></section>
 
+<section class="band" id="kod"><div class="wrap">
+  <div class="cathead"><div><h2>কোড লিখে রোবট চালাও</h2><p class="lead">ব্লক জুড়ে প্রোগ্রাম বানাও, তারপর চালিয়ে দেখো রোবট চার্জিং স্টেশনে পৌঁছায় কি না। প্রতিটা লেভেলে নতুন কিছু শিখবে।</p></div></div>
+  <div class="lvls" id="mzLv"></div>
+  <div class="mz" id="mz">
+    <div class="mzL">
+      <div class="cardtop"><h3 id="mzT"></h3><button data-say="#mzT,#mzLearn"></button></div><p id="mzLearn" class="mzlearn"></p>
+      <div class="mzboard"><svg id="mzSvg" aria-label="গোলকধাঁধা"></svg></div>
+      <div class="mzmsg" id="mzMsg" aria-live="polite"></div>
+    </div>
+    <div class="mzR">
+      <h3>ব্লক <small>চাপ দিলে প্রোগ্রামে যোগ হবে</small></h3><div class="pal" id="mzPal"></div>
+      <h3>তোমার প্রোগ্রাম <small id="mzCount"></small></h3>
+      <div class="prog" id="mzProg"></div>
+      <div class="mzbtns"><button class="btn go" id="mzRun">চালাও ▶</button><button class="btn alt" id="mzReset">রোবট শুরুতে ফেরাও</button><button class="btn alt" id="mzClear">সব মুছে ফেলো</button></div>
+    </div>
+  </div>
+</div></section>
 <section class="band" id="banao" style="background:var(--tint)"><div class="wrap">
   <div class="cathead"><div><h2>রোবট বানাও, মিশন জেতো</h2><p class="lead">একটা মিশন বেছে নাও, বাজেটের মধ্যে যন্ত্রাংশ কিনে রোবট বানাও, তারপর পরীক্ষা চালাও। রোবট সফল হবে, না আটকে যাবে?</p></div><p class="count" id="bRank"></p></div>
   <div class="missions" id="missions"></div>
   <div class="lab">
-    <div class="brief"><h3 id="mT"></h3><p id="mS"></p><p class="need" id="mNeed"></p></div>
+    <div class="brief"><div class="cardtop"><h3 id="mT"></h3><button data-say="#mT,#mS"></button></div><p id="mS"></p><p class="need" id="mNeed"></p></div>
     <div class="scene" id="scene"><svg id="bg" viewBox="0 0 600 260" preserveAspectRatio="xMidYMax slice" aria-hidden="true"></svg><svg id="bot" class="bot" viewBox="-14 6 214 128" aria-label="তোমার রোবট"></svg></div>
     <div class="shop"><div id="shop"></div><p class="shopmsg" id="shopMsg" aria-live="polite"></p><button class="btn go wide" id="runBtn2">রোবট তৈরি! মিশন শুরু করো</button></div>
     <div class="stats" id="stats"></div>
@@ -264,13 +359,22 @@ footer a{color:inherit}
     <svg class="pic" id="qPic" viewBox="0 0 200 140" aria-hidden="true"></svg>
     <div>
       <p class="count" id="qNum"></p>
-      <p id="qText" style="font-size:19px;font-weight:600"></p>
+      <div class="cardtop"><p id="qText" style="font-size:19px;font-weight:600;margin:0"></p><button data-say="#qText"></button></div>
       <div class="answers" id="qAns"></div>
       <div id="qEnd" hidden><p class="stars" id="qStars"></p><p id="qMsg"></p><button class="btn" id="qAgain">আবার খেলো</button></div>
     </div>
   </div>
 </div></section>
 
+<section class="band" id="sanad" style="background:var(--tint)"><div class="wrap">
+  <div class="cathead"><div><h2>তোমার সনদ</h2><p class="lead">সব ৮টা রোবট মিশন জিতলে তোমার নাম লেখা সনদ খুলে যাবে। ছবি হিসেবে রেখে দাও, বা প্রিন্ট করে বাবা-মা আর শিক্ষককে দেখাও!</p></div></div>
+  <div class="cert">
+    <div class="certL"><div id="cProg"></div>
+      <label for="cName" class="nm">সনদে তোমার নাম</label><input id="cName" type="text" maxlength="30" placeholder="যেমন: নুসরাত জাহান">
+      <div class="mzbtns"><button class="btn go" id="cMake">সনদে নাম বসাও</button><button class="btn alt" id="cSave">ছবি নামাও</button><button class="btn alt" id="cPrint">প্রিন্ট করো</button></div></div>
+    <div class="certR"><div class="cwrap"><canvas id="cCanvas" width="1600" height="1131" aria-label="সনদপত্র"></canvas><div class="lock" id="cLock"></div></div></div>
+  </div>
+</div></section>
 <footer class="band"><div class="wrap">
   <h3>রোবট পাঠশালা</h3>
   <p>বাংলাদেশের ৭ থেকে ১৮ বছরের শিক্ষার্থীদের জন্য রোবটিক্স শেখার খেলাঘর। ছবিগুলো শেখানোর জন্য আঁকা নকশা, আসল রোবটের হুবহু ছবি নয়।</p>
@@ -284,13 +388,14 @@ footer a{color:inherit}
   <button class="xbtn" id="mClose" aria-label="বন্ধ করো">×</button>
 </div>
 <div class="splitctl"><label for="splitR">ছবির ওপর আঙুল টেনে রোবটের ভেতরটা দেখো</label><input type="range" id="splitR" min="0" max="100" value="50"></div>
-<div class="mbody"><span class="tag" id="mCat"></span><h2 id="mName" style="margin-top:6px;font-size:30px"></h2><p class="count" id="mEn"></p><p id="mDesc"></p>
+<div class="mbody"><div class="cardtop"><span class="tag" id="mCat"></span><button data-say="#mName,#mDesc,#mEasy,#mFun"></button></div><h2 id="mName" style="margin-top:6px;font-size:30px"></h2><p class="count" id="mEn"></p><p id="mDesc"></p>
 <h3 style="margin:14px 0 8px;font-size:19px">ভেতরে কী কী আছে</h3><div class="parts" id="mParts"></div>
 <div class="easy" id="mEasy"></div><div class="fun" id="mFun"></div>
 <div class="facts" id="mFacts"></div>
 <a class="photo" id="mPhoto" href="#" target="_blank" rel="noopener">আসল রোবটের ছবি দেখো (উইকিপিডিয়া) ↗</a>
 <div class="mnav"><button class="btn alt" id="mPrev">← আগের</button><button class="btn alt" id="mNext">পরের →</button></div></div></dialog>
 
+<div id="printArea"></div>
 <div class="toast" id="toast" hidden role="status"><span></span><button class="do" hidden></button><button class="x" aria-label="বন্ধ করো">×</button></div>
 <dialog id="iosHelp" class="ioshelp"><div class="mbody"><h2 style="font-size:26px">আইফোনে অ্যাপ হিসেবে রাখো</h2>
 <ol><li>Safari ব্রাউজারে এই সাইটটা খোলো।</li><li>নিচের <b>শেয়ার</b> বোতামে চাপ দাও (চারকোনা বাক্স থেকে ওপরের দিকে তীর)।</li><li>তালিকা থেকে <b>Add to Home Screen</b> বেছে নাও।</li><li>ওপরে ডান কোণে <b>Add</b> চাপো। হোম স্ক্রিনে রোবট পাঠশালার আইকন চলে আসবে!</li></ol>
@@ -308,6 +413,12 @@ footer a{color:inherit}
 <script src="app2.js"></script>
 <script src="missions.js"></script>
 <script src="build.js"></script>
+<script src="mazecore.js"></script>
+<script src="maze.js"></script>
+<script src="story.js"></script>
+<script src="daily.js"></script>
+<script src="cert.js"></script>
 <script src="pwa.js"></script>
+<script src="voice.js"></script>
 </body>
 </html>

@@ -1,0 +1,158 @@
+{
+const RB = window.RB, MZ = window.MZ, bn = RB.bn, store = RB.store;
+const $ = id => document.getElementById(id);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const D = '#1d1b3a', CELL = 40;
+const BL = {
+  fwd: ['সামনে যাও', 'fwd'], right: ['ডানে ঘোরো ↻', 'turn'], left: ['বামে ঘোরো ↺', 'turn'],
+  rep: ['বারবার করো', 'rep'], while: ['লক্ষ্যে না পৌঁছানো পর্যন্ত বারবার', 'whl'], if: ['যদি … নাহলে', 'iff']
+};
+let li = store.get('mzLevel', 0), best = store.get('maze', {}), saved = store.get('mzProg', {});
+let prog = [], target = 'r', running = false, timer = null, ids = new WeakMap(), robo = null, angle = 0;
+const clone = o => JSON.parse(JSON.stringify(o));
+function listAt(path) {
+  const t = path.split('.'); let list = prog;
+  for (let i = 1; i < t.length; i += 2) list = list[+t[i]][t[i + 1]];
+  return list;
+}
+function nodeAt(path) { const t = path.split('.'); const idx = +t.pop(); return [listAt(t.join('.')), idx]; }
+const unlocked = i => i === 0 || (best[i - 1] || 0) > 0;
+const stars = n => '★'.repeat(n) + '☆'.repeat(3 - n);
+
+/* ----- level bar ----- */
+function renderLevels() {
+  $('mzLv').innerHTML = MZ.L.map((l, i) => `<button class="lvb" data-i="${i}" aria-pressed="${i === li}" ${unlocked(i) ? '' : 'disabled'}><b>${bn(i + 1)}</b><span>${unlocked(i) ? (best[i] ? stars(best[i]) : 'নতুন') : 'তালা'}</span></button>`).join('');
+}
+
+/* ----- board ----- */
+function drawBoard() {
+  const lv = MZ.L[li], P = MZ.parse(lv), W = P.cols * CELL, H = P.rows * CELL, svg = $('mzSvg');
+  svg.setAttribute('viewBox', `-4 -4 ${W + 8} ${H + 8}`);
+  let s = `<rect x="-4" y="-4" width="${W + 8}" height="${H + 8}" rx="12" fill="#2b3a67"/>`;
+  P.g.forEach((row, y) => row.forEach((c, x) => {
+    const X = x * CELL, Y = y * CELL;
+    if (c === '#') s += `<rect x="${X + 1}" y="${Y + 1}" width="${CELL - 2}" height="${CELL - 2}" rx="5" fill="#46578f"/><rect x="${X + 1}" y="${Y + 1}" width="${CELL - 2}" height="8" rx="4" fill="#5d70ad"/>`;
+    else s += `<rect x="${X + 1}" y="${Y + 1}" width="${CELL - 2}" height="${CELL - 2}" rx="5" fill="${(x + y) % 2 ? '#f4f1e6' : '#ebe6d6'}"/>`;
+    if (c === 'G') s += `<rect x="${X + 6}" y="${Y + 6}" width="28" height="28" rx="6" fill="#ffcd1f"/><path d="M${X + 22} ${Y + 9} L${X + 14} ${Y + 22} H${X + 20} L${X + 17} ${Y + 31} L${X + 27} ${Y + 17} H${X + 21} Z" fill="${D}"/>`;
+    if (c === 'B') s += `<g class="bat" data-k="${y},${x}"><rect x="${X + 12}" y="${Y + 11}" width="16" height="20" rx="3" fill="#2fa84f" stroke="${D}" stroke-width="1.5"/><rect x="${X + 17}" y="${Y + 8}" width="6" height="4" fill="${D}"/><path d="M${X + 21} ${Y + 14} L${X + 16} ${Y + 22} H${X + 20} L${X + 18} ${Y + 28} L${X + 24} ${Y + 19} H${X + 20} Z" fill="#fff"/></g>`;
+    if (c === 'S') s += `<circle cx="${X + 20}" cy="${Y + 20}" r="15" fill="none" stroke="#c9bfa0" stroke-width="2" stroke-dasharray="4 4"/>`;
+  }));
+  s += `<g id="mzTrail"></g><g id="mzBot"><g><rect x="-14" y="-12" width="28" height="26" rx="8" fill="#ff5a3c" stroke="${D}" stroke-width="1.5"/><rect x="-9" y="-8" width="18" height="9" rx="4" fill="${D}"/><circle cx="-4" cy="-3.5" r="2.4" fill="#5be0ff"/><circle cx="4" cy="-3.5" r="2.4" fill="#5be0ff"/><path d="M-6 -16 L0 -23 L6 -16 Z" fill="#ffcd1f" stroke="${D}" stroke-width="1.2"/></g></g>`;
+  svg.innerHTML = s;
+  robo = $('mzBot'); angle = lv.dir * 90; place(P.s[0], P.s[1], false);
+}
+function place(y, x, anim) {
+  robo.style.transition = anim && !reduce ? 'transform .32s ease-in-out' : 'none';
+  robo.style.transform = `translate(${x * CELL + 20}px,${y * CELL + 20}px) rotate(${angle}deg)`;
+}
+
+/* ----- program editor ----- */
+function blk(b, p) {
+  ids.set(b, p);
+  const [label, cls] = BL[b.t];
+  const x = `<button class="x" data-act="del" data-p="${p}" aria-label="মুছে ফেলো">×</button>`;
+  if (b.t === 'fwd') return `<div class="blk ${cls}" data-id="${p}"><span>${label}</span><button class="pill" data-act="n" data-p="${p}">${bn(b.n || 1)} ঘর</button>${x}</div>`;
+  if (b.t === 'right' || b.t === 'left') return `<div class="blk ${cls}" data-id="${p}"><span>${label}</span>${x}</div>`;
+  if (b.t === 'rep') return `<div class="blk ${cls} box" data-id="${p}"><div class="bh"><span>বারবার করো</span><button class="pill" data-act="n" data-p="${p}">${bn(b.n || 2)} বার</button>${x}</div>${slot(b.body, p + '.body')}</div>`;
+  if (b.t === 'while') return `<div class="blk ${cls} box" data-id="${p}"><div class="bh"><span>${label}</span>${x}</div>${slot(b.body, p + '.body')}</div>`;
+  return `<div class="blk ${cls} box" data-id="${p}"><div class="bh"><span>যদি</span><button class="pill" data-act="c" data-p="${p}">${MZ.COND[b.c]}</button>${x}</div><div class="blab">তাহলে</div>${slot(b.then, p + '.then')}<div class="blab">নাহলে</div>${slot(b.else, p + '.else')}</div>`;
+}
+function slot(list, path) {
+  return `<div class="slot">${list.map((b, i) => blk(b, path + '.' + i)).join('')}<button class="drop${target === path ? ' on' : ''}" data-act="tgt" data-p="${path}">${target === path ? '+ নতুন ব্লক এখানে বসবে' : '+ এখানে বসাও'}</button></div>`;
+}
+function renderProg() {
+  ids = new WeakMap();
+  $('mzProg').innerHTML = prog.length ? slot(prog, 'r') : `<p class="empty2">ওপরের ব্লকে চাপ দিয়ে প্রোগ্রাম বানাও।</p>${slot(prog, 'r')}`;
+  const n = MZ.count(prog), par = MZ.L[li].par;
+  $('mzCount').textContent = `${bn(n)}টি ব্লক · ৩ তারার জন্য ${bn(par)}টি বা কম`;
+  saved[li] = prog; store.set('mzProg', saved);
+}
+function renderPal() {
+  $('mzPal').innerHTML = MZ.L[li].blocks.map(t => `<button class="blk ${BL[t][1]} add" data-add="${t}">${BL[t][0]}</button>`).join('');
+}
+function validTarget() { try { listAt(target); } catch (e) { target = 'r'; } }
+
+/* ----- running ----- */
+function stop() { clearTimeout(timer); timer = null; running = false; $('mz').classList.remove('running'); $('mzRun').textContent = 'চালাও ▶'; }
+function resetBoard() { stop(); drawBoard(); document.querySelectorAll('#mzProg .now').forEach(e => e.classList.remove('now')); }
+function msg(html, kind) { $('mzMsg').innerHTML = html; $('mzMsg').className = 'mzmsg ' + (kind || ''); }
+function run() {
+  if (running) { resetBoard(); msg(''); return; }
+  if (!prog.length) { msg('আগে কিছু ব্লক যোগ করো!', 'warn'); return; }
+  resetBoard(); msg('রোবট চলছে…');
+  running = true; $('mz').classList.add('running'); $('mzRun').textContent = 'থামাও ■';
+  const lv = MZ.L[li], P = MZ.parse(lv), it = MZ.run(lv, prog);
+  let lastSt = null;
+  const tick = () => {
+    const r = it.next();
+    document.querySelectorAll('#mzProg .now').forEach(e => e.classList.remove('now'));
+    if (r.done) return finish(r.value || lastSt, lv, P);
+    const { b, st, kind } = r.value; lastSt = st;
+    const el = document.querySelector(`#mzProg [data-id="${ids.get(b)}"]`); if (el) el.classList.add('now');
+    if (kind === 'turn') { angle += b.t === 'right' ? 90 : -90; place(st.y, st.x, true); }
+    if (kind === 'move') {
+      place(st.y, st.x, true);
+      $('mzTrail').insertAdjacentHTML('beforeend', `<circle cx="${st.x * CELL + 20}" cy="${st.y * CELL + 20}" r="3" fill="#ff5a3c" opacity=".5"/>`);
+      const bat = document.querySelector(`#mzSvg .bat[data-k="${st.y},${st.x}"]`); if (bat) bat.style.opacity = '0';
+    }
+    if (kind === 'crash') { robo.classList.add('bump'); setTimeout(() => robo.classList.remove('bump'), 500); }
+    timer = setTimeout(tick, reduce ? 60 : 380);
+  };
+  tick();
+}
+function finish(st, lv, P) {
+  stop();
+  if (st.done) {
+    const got = MZ.stars(lv, prog, st, P);
+    if (got > (best[li] || 0)) { best[li] = got; store.set('maze', best); RB.ping && RB.ping(); }
+    const tips = [];
+    if (st.got.size < P.bat.length) tips.push(`পথে ${bn(P.bat.length - st.got.size)}টা ব্যাটারি রয়ে গেছে; সব তুললে আরও একটা তারা।`);
+    if (MZ.count(prog) > lv.par) tips.push(`${bn(lv.par)}টি বা কম ব্লকে পারবে? তাহলে আরও একটা তারা।`);
+    const next = li + 1 < MZ.L.length ? `<button class="btn" id="mzNext">পরের লেভেল →</button>` : '<b>তুমি সব লেভেল শেষ করেছ! সত্যিকারের প্রোগ্রামার!</b>';
+    msg(`<span class="st">${stars(got)}</span> দারুণ! রোবট চার্জিং স্টেশনে পৌঁছেছে! ${tips.join(' ')} ${next}`, 'win');
+    renderLevels();
+  } else if (st.crash) { msg('ধাক্কা! সামনে দেয়াল ছিল। রোবট যে ব্লকে থেমেছে, সেটা দেখে প্রোগ্রাম ঠিক করো।', 'lose'); }
+  else if (st.loop) { msg('রোবট একই জায়গায় ঘুরপাক খাচ্ছে! লুপের ভেতরে এমন কিছু রাখো যাতে রোবট এগোয়।', 'lose'); }
+  else msg('প্রোগ্রাম শেষ, কিন্তু রোবট এখনো লক্ষ্যে পৌঁছায়নি। আরও ব্লক যোগ করো।', 'warn');
+}
+
+function load(i) {
+  stop(); li = i; store.set('mzLevel', li);
+  const lv = MZ.L[li];
+  prog = clone(saved[li] || []); target = 'r';
+  $('mzT').textContent = `লেভেল ${bn(li + 1)}: ${lv.t}`; $('mzLearn').textContent = lv.learn;
+  renderLevels(); renderPal(); renderProg(); drawBoard(); msg('');
+}
+
+$('mzLv').addEventListener('click', e => { const c = e.target.closest('.lvb'); if (c && !c.disabled) load(+c.dataset.i); });
+$('mzPal').addEventListener('click', e => {
+  const c = e.target.closest('[data-add]'); if (!c || running) return;
+  if (MZ.count(prog) >= 40) { msg('ব্লক অনেক বেশি হয়ে গেছে! লুপ ব্যবহার করে ছোট করো।', 'warn'); return; }
+  validTarget();
+  const t = c.dataset.add, b = { t };
+  if (t === 'fwd') b.n = 1; if (t === 'rep') { b.n = 2; b.body = []; } if (t === 'while') b.body = [];
+  if (t === 'if') { b.c = 'wall'; b.then = []; b.else = []; }
+  const list = listAt(target); list.push(b);
+  if (b.body) target = `${target}.${list.length - 1}.body`;
+  if (b.then) target = `${target}.${list.length - 1}.then`;
+  resetBoard(); renderProg(); msg('');
+});
+$('mzProg').addEventListener('click', e => {
+  const c = e.target.closest('[data-act]'); if (!c || running) return;
+  const p = c.dataset.p;
+  if (c.dataset.act === 'tgt') target = p;
+  else {
+    const [list, i] = nodeAt(p), b = list[i];
+    if (c.dataset.act === 'del') { list.splice(i, 1); if (target.startsWith(p)) target = 'r'; }
+    if (c.dataset.act === 'n') b.n = b.t === 'fwd' ? (b.n || 1) % 6 + 1 : (b.n || 2) % 9 + 2;
+    if (c.dataset.act === 'c') { const ks = Object.keys(MZ.COND); b.c = ks[(ks.indexOf(b.c) + 1) % ks.length]; }
+  }
+  resetBoard(); renderProg(); msg('');
+});
+$('mzRun').addEventListener('click', run);
+$('mzReset').addEventListener('click', () => { resetBoard(); msg(''); });
+$('mzClear').addEventListener('click', () => { if (running) return; prog = []; target = 'r'; resetBoard(); renderProg(); msg(''); });
+$('mzMsg').addEventListener('click', e => { if (e.target.id === 'mzNext') { load(li + 1); $('kod').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' }); } });
+if (!unlocked(li)) li = 0;
+load(li);
+}
