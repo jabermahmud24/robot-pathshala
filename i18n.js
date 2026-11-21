@@ -38,7 +38,7 @@ const S = {
   'বাংলাদেশের ৭ থেকে ১৮ বছরের শিক্ষার্থীদের জন্য রোবটিক্স শেখার খেলাঘর। ছবিগুলো শেখানোর জন্য আঁকা নকশা, আসল রোবটের হুবহু ছবি নয়।': 'A robotics playground for students aged 7 to 18 in Bangladesh. The pictures are drawings made for learning, not exact copies of the real robots.',
   'রোবটের ভেতরের নীল নকশা': "Blueprint of the robot's insides", 'বাইরে': 'Outside', 'ভেতরে': 'Inside', 'বন্ধ করো': 'Close',
   'ছবির ওপর আঙুল টেনে রোবটের ভেতরটা দেখো': 'Drag across the picture to see inside the robot',
-  'ভেতরে কী কী আছে': "What's inside", 'আসল রোবটের ছবি দেখো (উইকিপিডিয়া) ↗': 'See photos of the real robot (Wikipedia) ↗',
+  'ভেতরে কী কী আছে': "What's inside", 'আসল রোবটের ছবি দেখো ↗': 'See photos of the real robot ↗', 'উইকিপিডিয়ায় পড়ো ↗': 'Read on Wikipedia ↗',
   '← আগের': '← Previous', 'পরের →': 'Next →',
   'আইফোনে অ্যাপ হিসেবে রাখো': 'Add the app to your iPhone', 'Safari ব্রাউজারে এই সাইটটা খোলো।': 'Open this site in the Safari browser.',
   'নিচের': 'Tap the', 'শেয়ার': 'Share', 'বোতামে চাপ দাও (চারকোনা বাক্স থেকে ওপরের দিকে তীর)।': 'button (a square with an arrow pointing up).',
