@@ -1,6 +1,6 @@
 // রোবট পাঠশালা অফলাইন সার্ভিস ওয়ার্কার।
 // সাইটের কোনো ফাইল বদলালে VERSION বাড়াও, তাহলে সবার কাছে নতুন সংস্করণ পৌঁছাবে।
-const VERSION = 'v8';
+const VERSION = 'v9';
 const CACHE = 'robot-pathshala-' + VERSION;
 const FONTS = 'robot-pathshala-fonts';
 const FILES = [
@@ -11,7 +11,8 @@ const FILES = [
 ];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)));
+  // cache: 'reload' skips the phone's short-term web cache, so an update never mixes new and old files
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES.map(f => new Request(f, { cache: 'reload' })))));
 });
 
 self.addEventListener('activate', e => {
