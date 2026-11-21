@@ -147,9 +147,11 @@ function fillRobot() {
   drawBlue(); setSplit(50);
   $('mEasy').innerHTML = r.a ? `<b>${RB.L('সহজ করে বুঝি', 'In simple words')}</b>${r.a}` : ''; $('mEasy').hidden = !r.a;
   $('mFun').innerHTML = r.f ? `<b>${RB.L('মজার তথ্য', 'Fun fact')}</b>${r.f}` : ''; $('mFun').hidden = !r.f;
-  const ph = (window.PHOTO && window.PHOTO[r.e]) || r.e;
-  $('mPhoto').href = 'https://commons.wikimedia.org/w/index.php?title=Special:MediaSearch&type=image&search=' + encodeURIComponent(ph) + '&uselang=' + (RB.en ? 'en' : 'bn');
-  $('mWiki').href = 'https://en.wikipedia.org/w/index.php?search=' + encodeURIComponent(r.e);
+  const ph = (window.PHOTO && window.PHOTO[r.e]) || ['', r.e];
+  const wiki = 'https://en.wikipedia.org/wiki/Special:Search?go=Go&search=' + encodeURIComponent(ph[1]);
+  // a checked Commons photo category if there is one, otherwise the Wikipedia article (which has photos)
+  $('mPhoto').href = ph[0] ? 'https://commons.wikimedia.org/wiki/Category:' + encodeURIComponent(ph[0].slice(2)).replace(/%2F/g, '/') + '?uselang=' + (RB.en ? 'en' : 'bn') : wiki;
+  $('mWiki').href = wiki; $('mWiki').hidden = !ph[0];
   $('mCat').textContent = CATS[r.c][0]; $('mCat').style.color = col;
   $('mName').textContent = r.n; $('mEn').textContent = RB.en ? r.bnName : r.e; $('mDesc').textContent = r.d;
   const f = [[RB.L('কী দিয়ে টের পায়', 'What it senses with'), r.w], [RB.L('কীভাবে নড়ে আর কাজ করে', 'How it moves and works'), r.m]];
