@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>রোবট পাঠশালা</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE occasion: a bright, friendly science workshop for kids 7-18
+   IDEA a robotics workbench poster: parts laid out, labelled, ready to tinker
+   PICTURE a large tappable robot whose parts light up and explain themselves
+   COLOUR white ground, sunflower yellow field, coral accent, sky-blue support
+   TYPE Baloo Da 2 display + Hind Siliguri text (both made for Bengali)
+   LAYOUT title over explorer (robot + part card side by side), stacked on phone */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#12142a);--ink:light-dark(#1d1b3a,#f3f1ff);--soft:light-dark(#5b5878,#b9b6d6);--sun:light-dark(#ffcd1f,#2b2760);--sunInk:light-dark(#1d1b3a,#fff6cf);--coral:#ff5a3c;--sky:#22b5e8;--card:light-dark(#ffffff,#1c1f3d);--line:light-dark(#e6e3f2,#33365e);--tint:light-dark(#f4f2fb,#191c38);--metal:light-dark(#dfe6f0,#3a4170);--metal2:light-dark(#b8c4d6,#262c55)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 "Hind Siliguri","Noto Sans Bengali",system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:"Baloo Da 2","Hind Siliguri",sans-serif;line-height:1.1;margin:0;text-wrap:balance}
+h1{font-size:clamp(34px,6vw,54px);font-weight:800}
+h2{font-size:clamp(28px,4.2vw,42px);font-weight:800}
+h3{font-size:22px;font-weight:700}
+p{margin:.4em 0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+.wrap{max-width:1240px;margin:0 auto}
+.band{padding:clamp(28px,4vw,64px) max(5vw,16px)}
+.lead{font-size:18px;color:var(--soft);max-width:62ch}
+nav{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:6px 18px;padding:8px max(5vw,16px)}
+.logo{display:flex;align-items:center;gap:8px;font:800 24px "Baloo Da 2",sans-serif;color:var(--ink);text-decoration:none;margin-right:auto}
+.links{display:flex;flex-wrap:wrap;gap:2px}
+.links a{color:var(--ink);text-decoration:none;padding:8px 10px;border-radius:10px;font-weight:600;font-size:16px}
+.links a:hover{background:var(--tint)}
+.hero{background:var(--sun);color:var(--sunInk)}
+.hero .lead{color:inherit;opacity:.85}
+.levels{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 6px}
+.lv{border:2px solid currentColor;background:transparent;border-radius:999px;padding:8px 16px;min-height:44px;font-weight:700;font-size:16px}
+.lv[aria-pressed=true]{background:var(--sunInk);color:var(--sun)}
+.explorer{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:24px;margin-top:22px;align-items:stretch}
+.stage{background:light-dark(#fff5c4,#1d1a48);border-radius:28px;position:relative;min-height:420px;overflow:hidden}
+.stage svg{position:absolute;inset:0;width:100%;height:100%}
+.part{cursor:pointer;transition:filter .2s}
+.part:hover{filter:brightness(1.08)}
+.part.on .hl{stroke:var(--coral);stroke-width:5;stroke-dasharray:10 7;animation:dash 1s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-34}}
+.infocard{background:var(--card);color:var(--ink);border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:7px 14px;min-height:44px;font-weight:600;font-size:15px}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tag{display:inline-block;background:var(--tint);border-radius:8px;padding:2px 10px;font-size:14px;font-weight:600;color:var(--soft)}
+.analogy{background:var(--tint);border-radius:16px;padding:12px 14px;font-size:16px}
+.loop{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:24px;align-items:start}
+.sim{background:var(--tint);border-radius:24px;padding:16px}
+.simfig{position:relative;height:220px}
+.simfig svg{position:absolute;inset:0;width:100%;height:100%}
+.ctrl{display:grid;gap:4px;margin-top:12px}
+.ctrl label{font-weight:600;font-size:15px;display:flex;justify-content:space-between;gap:8px}
+input[type=range]{width:100%;accent-color:var(--coral);height:32px}
+.code{font:15px/1.7 ui-monospace,Menlo,monospace;background:#1d1b3a;color:#f3f1ff;border-radius:16px;padding:14px 16px;overflow-x:auto;white-space:pre}
+.code .act{background:var(--coral);color:#fff;border-radius:4px}
+.steps3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0}
+.step{border-radius:16px;padding:10px 12px;background:var(--card);border:2px solid var(--line);font-size:15px}
+.step b{display:block;font:700 19px "Baloo Da 2",sans-serif}
+.step.live{border-color:var(--coral)}
+.cathead{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px}
+.search{width:min(100%,340px);font:16px inherit;font-family:inherit;padding:10px 14px;border:2px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);min-height:46px}
+.cats{margin:16px 0 18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px}
+.rc{background:var(--card);border:1.5px solid var(--line);border-radius:20px;padding:0 0 12px;text-align:left;display:flex;flex-direction:column;overflow:hidden;transition:transform .15s}
+.rc:hover{transform:translateY(-3px)}
+.rc .pic{height:120px;display:block}
+.rc b{font:700 18px/1.2 "Baloo Da 2",sans-serif;padding:8px 12px 0}
+.rc small{padding:0 12px;color:var(--soft);font-size:14px}
+.rc.seen b::after{content:" ✓";color:var(--coral)}
+.count{color:var(--soft);font-size:15px;margin-top:6px}
+.empty{padding:30px;text-align:center;color:var(--soft)}
+dialog{border:0;border-radius:28px;padding:0;max-width:min(640px,94vw);width:100%;background:var(--card);color:var(--ink)}
+dialog::backdrop{background:rgba(20,18,50,.55)}
+.mtop{height:190px;position:relative}
+.mtop svg{width:100%;height:100%;display:block}
+.mbody{padding:18px 22px 22px}
+.xbtn{position:absolute;top:10px;right:10px;width:44px;height:44px;border-radius:50%;border:0;background:var(--card);font-size:22px;font-weight:700}
+.facts{display:grid;gap:10px;margin-top:12px}
+.fact{background:var(--tint);border-radius:14px;padding:10px 14px}
+.fact span{display:block;font-weight:700;font-size:14px;color:var(--soft)}
+.mnav{display:flex;justify-content:space-between;gap:10px;margin-top:14px}
+.btn{border:0;border-radius:14px;padding:10px 18px;min-height:46px;font-weight:700;background:var(--ink);color:var(--bg)}
+.btn.alt{background:var(--tint);color:var(--ink)}
+.builder{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start}
+.opt{margin-bottom:14px}
+.opt h3{font-size:19px;margin-bottom:8px}
+.result{background:var(--sun);color:var(--sunInk);border-radius:28px;padding:18px;position:sticky;top:80px}
+.result .pic{height:220px;display:block;width:100%}
+.quizbox{background:var(--tint);border-radius:28px;padding:22px;display:grid;grid-template-columns:minmax(0,220px) minmax(0,1fr);gap:22px;align-items:center}
+.quizbox .pic{width:100%;height:180px}
+.answers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+.ans{border:2px solid var(--line);background:var(--card);border-radius:14px;padding:10px 12px;min-height:52px;font-weight:600;text-align:left}
+.ans.ok{border-color:#1fa463;background:color-mix(in srgb,#1fa463 18%,var(--card))}
+.ans.no{border-color:var(--coral);background:color-mix(in srgb,var(--coral) 15%,var(--card))}
+.stars{font-size:26px;letter-spacing:4px;color:var(--coral)}
+footer{background:var(--ink);color:var(--bg)}
+footer a{color:inherit}
+@media(max-width:860px){.explorer,.loop,.builder{grid-template-columns:minmax(0,1fr)}.result{position:static}}
+@media(max-width:600px){.stage{min-height:360px}.quizbox{grid-template-columns:minmax(0,1fr)}.answers{grid-template-columns:minmax(0,1fr)}.steps3{grid-template-columns:minmax(0,1fr)}.links a{padding:6px 8px;font-size:15px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.rc .pic{height:100px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <a class="logo" href="#ghor"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect x="5" y="8" width="20" height="16" rx="5" fill="#ff5a3c"/><circle cx="11" cy="16" r="3" fill="#fff"/><circle cx="19" cy="16" r="3" fill="#fff"/><line x1="15" y1="3" x2="15" y2="8" stroke="#22b5e8" stroke-width="3"/><circle cx="15" cy="3" r="2.5" fill="#22b5e8"/></svg>রোবট পাঠশালা</a>
+  <div class="links"><a href="#ghor">রোবটের ভেতর</a><a href="#chokro">কীভাবে ভাবে</a><a href="#robot">১০০ রোবট</a><a href="#banao">বানাও</a><a href="#quiz">কুইজ</a></div>
+</div></nav>
+
+<header class="hero band" id="ghor"><div class="wrap">
+  <h1>রোবট কীভাবে কাজ করে?</h1>
+  <p class="lead">নিচের রোবটের যেকোনো অংশে চাপ দাও। দেখবে প্রতিটা অংশ কী কাজ করে, আর আমাদের শরীরের কোন অংশের সাথে মেলে।</p>
+  <div class="levels" role="group" aria-label="তোমার স্তর বেছে নাও">
+    <button class="lv" data-lv="1" aria-pressed="true">ছোট্ট বিজ্ঞানী · ৭–১০</button>
+    <button class="lv" data-lv="2" aria-pressed="false">তরুণ প্রকৌশলী · ১১–১৪</button>
+    <button class="lv" data-lv="3" aria-pressed="false">রোবট বিশেষজ্ঞ · ১৫–১৮</button>
+  </div>
+  <div class="explorer">
+    <div class="stage" id="stage"></div>
+    <div class="infocard" aria-live="polite">
+      <div class="chips" id="partChips"></div>
+      <span class="tag" id="pTag"></span>
+      <h3 id="pTitle"></h3>
+      <p id="pText"></p>
+      <div class="analogy" id="pAnalogy"></div>
+    </div>
+  </div>
+</div></header>
+
+<section class="band" id="chokro"><div class="wrap">
+  <h2>সব রোবট তিনটা কাজ বারবার করে</h2>
+  <p class="lead">টের পাওয়া, ভাবা, তারপর কাজ করা। দেয়ালটা সরিয়ে দেখো রোবট কখন থামে।</p>
+  <div class="loop" style="margin-top:18px">
+    <div class="sim">
+      <div class="steps3">
+        <div class="step" id="s1"><b>১. টের পাওয়া</b><span id="s1t">সেন্সর দূরত্ব মাপছে</span></div>
+        <div class="step" id="s2"><b>২. ভাবা</b><span id="s2t">মস্তিষ্ক নিয়ম মিলাচ্ছে</span></div>
+        <div class="step" id="s3"><b>৩. কাজ করা</b><span id="s3t">মোটর চাকা ঘোরাচ্ছে</span></div>
+      </div>
+      <div class="simfig"><svg id="simSvg" aria-label="দেয়ালের দিকে চলা রোবট"></svg></div>
+      <div class="ctrl"><label for="wallR"><span>দেয়াল কত দূরে</span><span id="wallV"></span></label><input type="range" id="wallR" min="45" max="95" value="80"></div>
+      <div class="ctrl"><label for="thrR"><span>কত কাছে এলে থামবে</span><span id="thrV"></span></label><input type="range" id="thrR" min="5" max="40" value="15"></div>
+      <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap"><button class="btn" id="simGo">আবার চালাও</button></div>
+    </div>
+    <div>
+      <h3 style="margin-bottom:8px">রোবটের মাথায় যে নিয়ম চলছে</h3>
+      <div class="code" id="codeBox"></div>
+      <p id="loopNote" style="margin-top:12px"></p>
+    </div>
+  </div>
+</div></section>
+
+<section class="band" id="robot" style="background:var(--tint)"><div class="wrap">
+  <div class="cathead">
+    <div><h2>১০০টি রোবটের জগৎ</h2><p class="count" id="seenCount"></p></div>
+    <input class="search" id="q" type="search" placeholder="রোবট খোঁজো… যেমন: ড্রোন, মঙ্গল" aria-label="রোবট খোঁজো">
+  </div>
+  <div class="chips cats" id="catChips"></div>
+  <div class="grid" id="grid"></div>
+</div></section>
+
+<section class="band" id="banao"><div class="wrap">
+  <h2>নিজের রোবট বানাও</h2>
+  <p class="lead">চলার উপায়, সেন্সর আর হাতিয়ার বেছে নাও। দেখো তোমার রোবট কোন কাজের জন্য সবচেয়ে ভালো।</p>
+  <div class="builder" style="margin-top:18px">
+    <div id="opts"></div>
+    <div class="result" aria-live="polite">
+      <svg class="pic" id="bPic" viewBox="0 0 200 140" aria-hidden="true"></svg>
+      <h3 id="bName"></h3>
+      <p id="bJob"></p>
+      <p id="bLike" style="font-size:15px"></p>
+    </div>
+  </div>
+</div></section>
+
+<section class="band" id="quiz" style="padding-top:0"><div class="wrap">
+  <h2 style="margin-bottom:14px">কুইজ: কোন রোবট?</h2>
+  <div class="quizbox">
+    <svg class="pic" id="qPic" viewBox="0 0 200 140" aria-hidden="true"></svg>
+    <div>
+      <p class="count" id="qNum"></p>
+      <p id="qText" style="font-size:19px;font-weight:600"></p>
+      <div class="answers" id="qAns"></div>
+      <div id="qEnd" hidden><p class="stars" id="qStars"></p><p id="qMsg"></p><button class="btn" id="qAgain">আবার খেলো</button></div>
+    </div>
+  </div>
+</div></section>
+
+<footer class="band"><div class="wrap">
+  <h3>রোবট পাঠশালা</h3>
+  <p>বাংলাদেশের ৭ থেকে ১৮ বছরের শিক্ষার্থীদের জন্য রোবটিক্স শেখার খেলাঘর। ছবিগুলো শেখানোর জন্য আঁকা নকশা, আসল রোবটের হুবহু ছবি নয়।</p>
+</div></footer>
+
+<dialog id="dlg"><div class="mtop"><svg id="mPic" viewBox="0 0 200 140" aria-hidden="true"></svg><button class="xbtn" id="mClose" aria-label="বন্ধ করো">×</button></div>
+<div class="mbody"><span class="tag" id="mCat"></span><h2 id="mName" style="margin-top:6px;font-size:30px"></h2><p class="count" id="mEn"></p><p id="mDesc"></p><div class="facts" id="mFacts"></div>
+<div class="mnav"><button class="btn alt" id="mPrev">← আগের</button><button class="btn alt" id="mNext">পরের →</button></div></div></dialog>
+
+<script src="r1.js"></script>
+<script src="r2.js"></script>
+<script src="r3.js"></script>
+<script src="r4.js"></script>
+<script src="app.js"></script>
+<script src="app2.js"></script>
+</body>
+</html>

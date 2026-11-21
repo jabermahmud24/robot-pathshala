@@ -1,0 +1,201 @@
+{
+const RB = window.RB, bn = RB.bn, ROB = RB.ROB, CATS = RB.CATS;
+const $ = id => document.getElementById(id);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ----- sense, think, act simulator ----- */
+const sim = $('simSvg'), wallR = $('wallR'), thrR = $('thrR');
+let pos = 0, ang = 0, phase = 'go', t0 = 0, tick = 0, lastKey = '';
+const LEN = 14;
+const NOTES = [
+  'রোবট এই তিনটা কাজ বারবার করে, এক সেকেন্ডে অনেকবার। ঠিক যেমন তুমি রাস্তা পার হওয়ার আগে দেখো, ভাবো, তারপর হাঁটো।',
+  'এই চক্রের নাম সেন্স–থিংক–অ্যাক্ট লুপ। থামার সীমা খুব কম দিলে কী হয়? আসল রোবট থামতেও একটু সময় নেয়, তাই দেয়ালে ধাক্কা খাওয়ার ঝুঁকি বাড়ে।',
+  'এই স্তরে রোবট দেয়ালের কাছে এসে নিজে গতি কমায়: গতি = K × (দূরত্ব − সীমা)। একে P-নিয়ন্ত্রণ বলে, PID-র প্রথম অংশ। গতি দ্বিগুণ হলে ব্রেক করার দূরত্ব প্রায় চারগুণ হয় (v²/2a), তাই আগেভাগে আস্তে হওয়া জরুরি।'
+];
+function code(d, thr, go) {
+  const a = s => `<span class="act">${s}</span>`;
+  if (RB.lv === 3) return [
+    'void loop() {',
+    `  long d = sonar.ping_cm();      // এখন ${d}`,
+    `  if (d < ${thr}) {`,
+    go ? '    stopMotors(); turnLeft();' : '    ' + a('stopMotors(); turnLeft();'),
+    '  } else {',
+    go ? a(`    int speed = constrain(K * (d - ${thr}), 40, 255);`) : `    int speed = constrain(K * (d - ${thr}), 40, 255);`,
+    go ? a('    forward(speed);') : '    forward(speed);',
+    '  }', '}'].join('\n');
+  return [
+    'বারবার করো {',
+    `  দূরত্ব = সেন্সর.মাপো()     // এখন ${bn(d)} সেমি`,
+    `  যদি (দূরত্ব < ${bn(thr)}) {`,
+    go ? '    মোটর.থামো(); ঘোরো()' : '    ' + a('মোটর.থামো(); ঘোরো()'),
+    '  } নাহলে {',
+    go ? '    ' + a('মোটর.সামনে_চলো()') : '    মোটর.সামনে_চলো()',
+    '  }', '}'].join('\n');
+}
+function drawSim() {
+  const W = sim.clientWidth, H = sim.clientHeight; if (!W) return;
+  const wall = +wallR.value, thr = +thrR.value, pad = 16, gy = H - 34;
+  const X = u => pad + u * (W - 2 * pad - 18) / 100;
+  const d = Math.max(0, Math.round(wall - pos - LEN));
+  const rx = X(pos), rw = X(pos + LEN) - rx, rh = Math.min(46, rw * .75), cx = rx + rw / 2, cy = gy - 12 - rh / 2;
+  const fx = X(pos + LEN), wx = X(wall), lx = X(wall - thr);
+  let waves = '';
+  if (phase === 'go') for (let i = 0; i < 3; i++) { const r = ((tick * .8 + i * 12) % 36) + 6; waves += `<path d="M${fx + r} ${cy - r * .7} q${r * .35} ${r * .7} 0 ${r * 1.4}" stroke="#22b5e8" stroke-width="3" fill="none" opacity="${1 - r / 44}"/>`; }
+  sim.innerHTML = `<line x1="0" y1="${gy}" x2="${W}" y2="${gy}" stroke="currentColor" opacity=".25" stroke-width="2"/>
+  <line x1="${lx}" y1="${gy - 92}" x2="${lx}" y2="${gy}" stroke="#ff5a3c" stroke-width="2" stroke-dasharray="6 5"/>
+  <text x="${lx - 6}" y="${gy - 96}" text-anchor="end" font-size="14" fill="#ff5a3c" font-weight="600">থামার সীমা</text>
+  <rect x="${wx}" y="${gy - 110}" width="18" height="110" rx="3" fill="#8a6a4a"/>${[0, 1, 2, 3, 4].map(i => `<line x1="${wx}" y1="${gy - 22 * i - 11}" x2="${wx + 18}" y2="${gy - 22 * i - 11}" stroke="#5c4330" stroke-width="2"/>`).join('')}
+  ${waves}
+  <line x1="${fx}" y1="${gy + 16}" x2="${wx}" y2="${gy + 16}" stroke="currentColor" stroke-width="1.5" opacity=".6"/>
+  <text x="${(fx + wx) / 2}" y="${gy + 30}" text-anchor="middle" font-size="14" fill="currentColor" style="font-weight:600">${bn(d)} সেমি</text>
+  <g transform="rotate(${-ang} ${cx} ${cy})"><rect x="${rx}" y="${cy - rh / 2}" width="${rw}" height="${rh}" rx="10" fill="#ff5a3c"/><rect x="${fx - 10}" y="${cy - 9}" width="10" height="18" rx="3" fill="#1d1b3a"/><circle cx="${fx - 5}" cy="${cy - 4}" r="2.5" fill="#5be0ff"/><circle cx="${fx - 5}" cy="${cy + 4}" r="2.5" fill="#5be0ff"/></g>
+  <circle cx="${rx + rw * .25}" cy="${gy - 10}" r="10" fill="#1d1b3a"/><circle cx="${rx + rw * .75}" cy="${gy - 10}" r="10" fill="#1d1b3a"/>`;
+  const go = phase === 'go', key = d + phase + RB.lv + thr;
+  if (key !== lastKey) {
+    lastKey = key;
+    $('s1t').textContent = `দূরত্ব = ${bn(d)} সেমি`;
+    $('s2t').textContent = go ? `${bn(d)} > ${bn(thr)}, তাই চলতে থাকো` : `${bn(d)} < ${bn(thr)}! থামতে হবে`;
+    $('s3t').textContent = go ? 'মোটর চাকা সামনে ঘোরাচ্ছে' : 'মোটর থামল, এবার ঘুরছে';
+    $('s2').classList.toggle('live', !go); $('s3').classList.toggle('live', !go); $('s1').classList.add('live');
+    $('codeBox').innerHTML = code(d, thr, go);
+  }
+}
+function stopPos() { return +wallR.value - LEN - +thrR.value; }
+function reset() { pos = 0; ang = 0; phase = 'go'; if (reduce) { pos = Math.max(0, stopPos()); phase = 'stop'; ang = 0; } drawSim(); }
+function frame(now) {
+  tick++;
+  const wall = +wallR.value, thr = +thrR.value, d = wall - pos - LEN;
+  if (phase === 'go') {
+    let v = .32;
+    if (RB.lv === 3) v = Math.min(.32, Math.max(.05, .03 * (d - thr)));
+    pos += v;
+    if (d - v <= thr) { pos = Math.max(0, wall - LEN - thr); phase = 'stop'; t0 = now; }
+  } else if (now - t0 > 700 && now - t0 < 1700) { ang = Math.min(90, (now - t0 - 700) / 1000 * 90); }
+  else if (now - t0 > 3000) { pos = 0; ang = 0; phase = 'go'; }
+  drawSim();
+  requestAnimationFrame(frame);
+}
+const upd = () => { $('wallV').textContent = bn(wallR.value) + ' সেমি'; $('thrV').textContent = bn(thrR.value) + ' সেমি'; };
+[wallR, thrR].forEach(r => r.addEventListener('input', () => { upd(); if (reduce) reset(); else if (phase !== 'go') reset(); }));
+$('simGo').addEventListener('click', reset);
+const roSim = new ResizeObserver(drawSim); roSim.observe(sim);
+upd();
+RB.onLv.push(() => { $('loopNote').textContent = NOTES[RB.lv - 1]; lastKey = ''; drawSim(); });
+if (reduce) reset(); else requestAnimationFrame(frame);
+
+/* ----- catalogue of 100 robots ----- */
+const seen = new Set(RB.store.get('seen', []));
+let cat = 'all', list = ROB;
+const grid = $('grid'), q = $('q');
+const counts = {}; ROB.forEach(r => counts[r.c] = (counts[r.c] || 0) + 1);
+$('catChips').innerHTML = `<button class="chip" data-c="all" aria-pressed="true">সব ${bn(ROB.length)}</button>` +
+  Object.entries(CATS).map(([k, v]) => `<button class="chip" data-c="${k}" aria-pressed="false">${v[0]} ${bn(counts[k] || 0)}</button>`).join('');
+const card = r => `<button class="rc${seen.has(r.id) ? ' seen' : ''}" data-id="${r.id}"><svg class="pic" viewBox="0 0 200 140" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${RB.pic(r.s, CATS[r.c][1])}</svg><b>${r.n}</b><small>${r.e}</small></button>`;
+function seenText() { $('seenCount').textContent = seen.size >= ROB.length ? `অভিনন্দন! তুমি ${bn(ROB.length)}টি রোবটই দেখেছ। এখন তুমি রোবট বিশেষজ্ঞ!` : `${bn(ROB.length)}টির মধ্যে ${bn(seen.size)}টি রোবট দেখেছ। যেকোনো কার্ডে চাপ দাও।`; }
+function render() {
+  const s = q.value.trim().toLowerCase();
+  list = ROB.filter(r => (cat === 'all' || r.c === cat) && (!s || (r.n + ' ' + r.e + ' ' + r.d + ' ' + CATS[r.c][0]).toLowerCase().includes(s)));
+  grid.innerHTML = list.length ? list.map(card).join('') : `<p class="empty">“${q.value}” নামে কোনো রোবট পাওয়া যায়নি। অন্য শব্দ লিখে দেখো, যেমন: চাকা, পানি, কৃষি।</p>`;
+  seenText();
+}
+$('catChips').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; cat = b.dataset.c; $('catChips').querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', String(x === b))); render(); });
+q.addEventListener('input', render);
+grid.addEventListener('click', e => { const b = e.target.closest('.rc'); if (b) openRobot(+b.dataset.id, list); });
+
+/* ----- robot detail dialog ----- */
+const dlg = $('dlg');
+let mList = ROB, mId = 0;
+function fillRobot() {
+  const r = ROB[mId], col = CATS[r.c][1];
+  $('mPic').innerHTML = RB.pic(r.s, col);
+  $('mPic').setAttribute('preserveAspectRatio', 'xMidYMid slice');
+  $('mCat').textContent = CATS[r.c][0]; $('mCat').style.color = col;
+  $('mName').textContent = r.n; $('mEn').textContent = r.e; $('mDesc').textContent = r.d;
+  const f = [['কী দিয়ে টের পায়', r.w], ['কীভাবে নড়ে আর কাজ করে', r.m]];
+  if (RB.lv > 1) f.push(['ভেতরের প্রযুক্তি', r.t]);
+  if (RB.lv === 1) f.push(['আরও জানতে চাও?', 'ওপরে স্তর বদলে “তরুণ প্রকৌশলী” বেছে নিলে এই রোবটের ভেতরের প্রযুক্তিও দেখতে পাবে।']);
+  $('mFacts').innerHTML = f.map(([h, t]) => `<div class="fact"><span>${h}</span>${t}</div>`).join('');
+  if (!seen.has(r.id)) { seen.add(r.id); RB.store.set('seen', [...seen]); const c = grid.querySelector(`[data-id="${r.id}"]`); if (c) c.classList.add('seen'); seenText(); }
+}
+function openRobot(id, from) { mList = from && from.length ? from : ROB; mId = id; fillRobot(); if (!dlg.open) { try { dlg.showModal(); } catch (e) { dlg.setAttribute('open', ''); } } }
+RB.openRobot = openRobot;
+function step(k) { const i = mList.findIndex(r => r.id === mId); mId = mList[(i + k + mList.length) % mList.length].id; fillRobot(); }
+$('mPrev').addEventListener('click', () => step(-1));
+$('mNext').addEventListener('click', () => step(1));
+$('mClose').addEventListener('click', () => dlg.close());
+dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+RB.onLv.push(() => { if (dlg.open) fillRobot(); });
+render();
+
+/* ----- build your own robot ----- */
+const OPTS = [
+  ['move', 'কীভাবে চলবে?', [['wheel', 'চাকা'], ['dog', 'পা'], ['drone', 'প্রপেলারে উড়বে'], ['sub', 'পানির নিচে সাঁতরাবে'], ['arm', 'এক জায়গায় দাঁড়ানো বাহু']]],
+  ['sense', 'কী দিয়ে টের পাবে?', [['cam', 'ক্যামেরা'], ['sonar', 'আল্ট্রাসনিক'], ['heat', 'তাপ সেন্সর'], ['gps', 'GPS']]],
+  ['tool', 'হাতে কী থাকবে?', [['grip', 'গ্রিপার'], ['brush', 'ব্রাশ'], ['spray', 'স্প্রে'], ['none', 'কিছু না, শুধু দেখবে']]]
+];
+const TCOL = { grip: '#7a5cff', brush: '#ff8a3d', spray: '#1ea7dc', none: '#e8432f' };
+const NAMES = {
+  'wheel-grip': 'ডেলিভারি রোবট', 'wheel-brush': 'ঘর পরিষ্কারক রোবট', 'wheel-spray': 'জীবাণুনাশক রোবট', 'wheel-none': 'টহলদার রোবট',
+  'dog-grip': 'বাহুওয়ালা রোবট কুকুর', 'dog-brush': 'সোলার প্যানেল পরিষ্কারক', 'dog-spray': 'আগুন নেভানো রোবট কুকুর', 'dog-none': 'পরিদর্শক রোবট কুকুর',
+  'drone-grip': 'ডেলিভারি ড্রোন', 'drone-brush': 'জানালা পরিষ্কারক ড্রোন', 'drone-spray': 'কৃষি স্প্রে ড্রোন', 'drone-none': 'ছবি তোলার ড্রোন',
+  'sub-grip': 'পানির নিচের উদ্ধারকারী', 'sub-brush': 'জাহাজ পরিষ্কারক', 'sub-spray': 'পানির নিচের মেরামতকারী', 'sub-none': 'সমুদ্র গবেষক রোবট',
+  'arm-grip': 'পিক-অ্যান্ড-প্লেস বাহু', 'arm-brush': 'পালিশ করার বাহু', 'arm-spray': 'রং করার রোবট', 'arm-none': 'মান পরীক্ষক বাহু'
+};
+const WHERE = { wheel: 'ঘরে আর রাস্তায়', dog: 'পাহাড়ি আর এবড়োখেবড়ো জায়গায়', drone: 'আকাশে উড়ে', sub: 'নদী আর সাগরের নিচে', arm: 'কারখানায় এক জায়গায় দাঁড়িয়ে' };
+const DO = { grip: 'জিনিস তুলে পৌঁছে দিতে', brush: 'ময়লা পরিষ্কার করতে', spray: 'পানি বা ওষুধ ছিটাতে', none: 'চারপাশ পাহারা দিতে' };
+const WHY = { cam: 'ক্যামেরা দিয়ে সে জিনিস আর মানুষ চিনবে।', sonar: 'আল্ট্রাসনিক দিয়ে সে বাধা টের পেয়ে এড়িয়ে যাবে।', heat: 'তাপ সেন্সর দিয়ে সে আগুন বা মানুষের শরীরের উষ্ণতা খুঁজবে।', gps: 'GPS দিয়ে সে জানবে পৃথিবীর ঠিক কোথায় আছে।' };
+const LIKE = { wheel: ['wheel', 'disc', 'car', 'rover'], dog: ['dog', 'bug'], drone: ['drone', 'plane'], sub: ['sub', 'boat', 'fish'], arm: ['arm'] };
+let b = Object.assign({ move: 'wheel', sense: 'cam', tool: 'brush' }, RB.store.get('build', {}));
+$('opts').innerHTML = OPTS.map(([k, h, o]) => `<div class="opt"><h3>${h}</h3><div class="chips" data-k="${k}">${o.map(([v, t]) => `<button class="chip" data-v="${v}" aria-pressed="false">${t}</button>`).join('')}</div></div>`).join('');
+function build() {
+  document.querySelectorAll('#opts .chips').forEach(g => g.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', String(b[g.dataset.k] === c.dataset.v))));
+  $('bPic').innerHTML = RB.pic(b.move, TCOL[b.tool]);
+  $('bName').textContent = 'তোমার রোবট: ' + NAMES[b.move + '-' + b.tool];
+  let warn = '';
+  if (b.move === 'sub' && b.sense === 'gps') warn = ' সাবধান: পানির নিচে GPS সংকেত পৌঁছায় না! এখানে সোনার বা ক্যামেরা বেশি কাজের।';
+  if (b.move === 'arm' && b.sense === 'gps') warn = ' এক জায়গায় দাঁড়ানো বাহু কখনো নড়ে না, তাই GPS তার কাজে লাগবে না। ক্যামেরা দিয়ে দেখো।';
+  $('bJob').textContent = `এই রোবট ${WHERE[b.move]} ${DO[b.tool]} পারবে। ${WHY[b.sense]}${warn}`;
+  const like = ROB.filter(r => LIKE[b.move].includes(r.s)).slice(0, 4);
+  $('bLike').innerHTML = 'এমন আসল রোবট: ' + like.map(r => `<button class="chip" data-id="${r.id}" style="margin:4px 4px 0 0">${r.n}</button>`).join('');
+  RB.store.set('build', b);
+}
+$('opts').addEventListener('click', e => { const c = e.target.closest('.chip'); if (!c) return; b[c.parentElement.dataset.k] = c.dataset.v; build(); });
+$('bLike').addEventListener('click', e => { const c = e.target.closest('.chip'); if (c) openRobot(+c.dataset.id, ROB); });
+build();
+
+/* ----- quiz ----- */
+const QN = 6;
+let qs = [], qi = 0, score = 0;
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+function newQuiz() { qs = shuffle(ROB.map(r => r.id)).slice(0, QN); qi = 0; score = 0; $('qEnd').hidden = true; $('qAns').hidden = false; ask(); }
+function ask() {
+  const r = ROB[qs[qi]];
+  const others = shuffle(ROB.filter(x => x.id !== r.id)).slice(0, 3);
+  $('qPic').innerHTML = RB.pic(r.s, CATS[r.c][1]);
+  $('qNum').textContent = `প্রশ্ন ${bn(qi + 1)} / ${bn(QN)} · স্কোর ${bn(score)}`;
+  $('qText').textContent = r.d + ' এটা কোন রোবট?';
+  $('qAns').innerHTML = shuffle([r, ...others]).map(o => `<button class="ans" data-id="${o.id}">${o.n}</button>`).join('');
+}
+$('qAns').addEventListener('click', e => {
+  const btn = e.target.closest('.ans'); if (!btn || $('qAns').dataset.lock) return;
+  const right = qs[qi], ok = +btn.dataset.id === right;
+  $('qAns').dataset.lock = '1';
+  if (ok) score++;
+  $('qAns').querySelectorAll('.ans').forEach(x => { x.disabled = true; if (+x.dataset.id === right) x.classList.add('ok'); else if (x === btn) x.classList.add('no'); });
+  $('qNum').textContent = `প্রশ্ন ${bn(qi + 1)} / ${bn(QN)} · স্কোর ${bn(score)} · ${ok ? 'ঠিক হয়েছে!' : 'এবার হয়নি, পরেরটায় হবে!'}`;
+  setTimeout(() => {
+    delete $('qAns').dataset.lock;
+    qi++;
+    if (qi < QN) return ask();
+    $('qAns').hidden = true; $('qEnd').hidden = false;
+    $('qText').textContent = 'কুইজ শেষ!';
+    $('qNum').textContent = `তোমার স্কোর ${bn(score)} / ${bn(QN)}`;
+    $('qStars').textContent = '★'.repeat(score) + '☆'.repeat(QN - score);
+    $('qMsg').textContent = score >= 5 ? 'দারুণ! তুমি সত্যিকারের রোবট বিশেষজ্ঞ।' : score >= 3 ? 'ভালো হয়েছে! ১০০ রোবটের তালিকা ঘুরে আবার চেষ্টা করো।' : 'চিন্তা নেই! রোবটের কার্ডগুলো পড়ে আবার খেলো, এবার আরও ভালো হবে।';
+  }, 1300);
+});
+$('qAgain').addEventListener('click', newQuiz);
+newQuiz();
+
+RB.setLv(RB.lv);
+}
