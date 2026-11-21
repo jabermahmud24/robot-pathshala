@@ -31,6 +31,16 @@ btn.addEventListener('click', async () => {
 $('iosClose').addEventListener('click', () => $('iosHelp').close());
 window.addEventListener('appinstalled', () => { btn.hidden = true; show(L('অ্যাপ ইনস্টল হয়েছে! এখন হোম স্ক্রিন থেকে খোলো।', 'App installed! Open it from your home screen.')); });
 
+/* share the site */
+const sb = $('shareBtn');
+if (sb) sb.addEventListener('click', async () => {
+  const url = 'https://jabermahmud24.github.io/robot-pathshala/' + (window.LANG === 'en' ? '?lang=en' : '');
+  const data = { title: L('রোবট পাঠশালা', 'Robot Pathshala'), text: L('বাংলায় খেলতে খেলতে রোবট শেখো!', 'Learn how robots work, through play!'), url };
+  try { if (navigator.share) { await navigator.share(data); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
+  try { await navigator.clipboard.writeText(url); show(L('লিংক কপি হয়েছে! এখন যেকোনো জায়গায় পেস্ট করো।', 'Link copied! Paste it anywhere.')); }
+  catch (e) { show(url); }
+});
+
 /* offline support and updates */
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
   try {

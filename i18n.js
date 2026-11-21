@@ -2,6 +2,9 @@
 {
 let lang = 'bn';
 try { lang = JSON.parse(localStorage.getItem('lang')) || 'bn'; } catch (e) {}
+// ?lang=en or ?lang=bn in the address wins, so each language has its own link for search engines
+const qp = new URLSearchParams(location.search).get('lang');
+if (qp === 'en' || qp === 'bn') { lang = qp; try { localStorage.setItem('lang', JSON.stringify(qp)); } catch (e) {} }
 if (lang !== 'en') lang = 'bn';
 window.LANG = lang;
 window.L = (bn, en) => lang === 'en' ? en : bn;
@@ -43,7 +46,7 @@ const S = {
   'আইফোনে অ্যাপ হিসেবে রাখো': 'Add the app to your iPhone', 'Safari ব্রাউজারে এই সাইটটা খোলো।': 'Open this site in the Safari browser.',
   'নিচের': 'Tap the', 'শেয়ার': 'Share', 'বোতামে চাপ দাও (চারকোনা বাক্স থেকে ওপরের দিকে তীর)।': 'button (a square with an arrow pointing up).',
   'তালিকা থেকে': 'From the list, choose', 'বেছে নাও।': '.', 'ওপরে ডান কোণে': 'In the top-right corner, tap',
-  'চাপো। হোম স্ক্রিনে রোবট পাঠশালার আইকন চলে আসবে!': '. The Robot Pathshala icon will appear on your home screen!', 'বুঝেছি': 'Got it'
+  'চাপো। হোম স্ক্রিনে রোবট পাঠশালার আইকন চলে আসবে!': '. The Robot Pathshala icon will appear on your home screen!', 'বুঝেছি': 'Got it', 'বন্ধুদের সাথে শেয়ার করো': 'Share with friends'
 };
 window.I18N_STATIC = S;
 function translate(root) {
@@ -58,16 +61,26 @@ function translate(root) {
   root.querySelectorAll('[placeholder],[aria-label],[title]').forEach(el => ['placeholder', 'aria-label', 'title'].forEach(a => { const v = el.getAttribute(a); if (v && S[v.trim()]) el.setAttribute(a, S[v.trim()]); }));
 }
 translate(document.body);
-if (lang === 'en') document.title = 'Robot Pathshala';
+const BASE = 'https://jabermahmud24.github.io/robot-pathshala/';
+const setMeta = (sel, attr, val) => { const m = document.querySelector(sel); if (m) m.setAttribute(attr, val); };
+if (lang === 'en') {
+  document.title = 'Robot Pathshala | Learn robotics through play, in Bangla and English';
+  const d = 'Learn robotics through play, in Bangla and English: robot parts, blueprints of 100 robots, a block-coding maze, a robot-building mission game and quizzes. Free for students aged 7 to 18, and it works offline.';
+  ['meta[name=description]', 'meta[property="og:description"]', 'meta[name="twitter:description"]'].forEach(s => setMeta(s, 'content', d));
+  setMeta('meta[property="og:title"]', 'content', document.title); setMeta('meta[name="twitter:title"]', 'content', 'Robot Pathshala');
+  setMeta('meta[property="og:url"]', 'content', BASE + '?lang=en'); setMeta('meta[property="og:locale"]', 'content', 'en_US');
+}
+const canon = document.createElement('link'); canon.rel = 'canonical'; canon.href = lang === 'en' ? BASE + '?lang=en' : BASE; document.head.appendChild(canon);
 // ভাষা বদলের বোতাম
 const btn = document.getElementById('langBtn');
 if (btn) {
   btn.textContent = lang === 'en' ? 'বাংলা' : 'English';
   btn.setAttribute('aria-label', lang === 'en' ? 'বাংলায় দেখো' : 'Switch to English');
   btn.addEventListener('click', () => {
-    try { localStorage.setItem('lang', JSON.stringify(lang === 'en' ? 'bn' : 'en')); } catch (e) {}
+    const next = lang === 'en' ? 'bn' : 'en';
+    try { localStorage.setItem('lang', JSON.stringify(next)); } catch (e) {}
     try { sessionStorage.setItem('langScroll', String(window.scrollY)); } catch (e) {}
-    location.reload();
+    location.href = location.pathname + (next === 'en' ? '?lang=en' : '?lang=bn');
   });
 }
 try { const y = +sessionStorage.getItem('langScroll'); if (y) { sessionStorage.removeItem('langScroll'); addEventListener('load', () => scrollTo(0, y)); } } catch (e) {}
